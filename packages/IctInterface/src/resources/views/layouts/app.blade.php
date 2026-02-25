@@ -29,15 +29,6 @@
     </script>
     <script src="{{ asset('ict-assets/js/app.js') }}" defer></script>
 
-
-    {{-- <script src="{{ asset('js/multiselect.js') }}" defer></script> --}}
-    {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> --}}
-
-    {{-- daterangepicker rimosso: sostituito dal componente Alpine.js dateRangeField (type=daterange) --}}
-    {{-- <script type="text/javascript" src="{{asset('ict-assets/js/jquery.slimscroll.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('ict-assets/js/jquery.slimscroll.horizontal.min.js')}}"></script> --}}
-
-
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -101,10 +92,6 @@
 
         </div>
         <div id="footer">
-            {{-- @if (!empty($report['multicheck_reference']))
-                @include('ict::multiselect.multiselect-js')
-            @endif --}} {{-- Sostituito da Alpine.js + Livewire ict-multicheck-manager in report.blade.php --}}
-
             <script>
                @if(isset($roles_checker) && $roles_checker['has_edit_button'] == 0)
                document.querySelectorAll('button.btn, a.btn').forEach(function(el) { el.setAttribute('disabled', 'true'); el.style.pointerEvents = 'none'; el.style.opacity = '0.5'; });
@@ -426,8 +413,6 @@
                     }));
                 });
             </script>
-
-            {{-- @include('js.finder') --}}
         </div>
     </div>
 </body>
