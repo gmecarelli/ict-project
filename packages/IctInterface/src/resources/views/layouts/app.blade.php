@@ -107,45 +107,9 @@
             @endif --}} {{-- Sostituito da Alpine.js + Livewire ict-multicheck-manager in report.blade.php --}}
 
             <script>
-                // $(document).on('blur', '.numeric', function(e) {
-                //     var field = e.currentTarget;
-                //     console.log($("#"+field.id).val());
-                //     if($("#"+field.id).val() == 'undefined') {
-                //         var def_value = $("#"+field.id).val().replace(",", ".");
-                //         $("#"+field.id).val(def_value);
-                //         console.log($("#"+field.id).val());
-                //     }
-
-                // });
-
-                var url = '{{route("ref_numeric")}}';
-                $("select#reference").on('change', function() {
-                    @if(!request()->has('report'))
-                        var requestData = {'reference': $("#reference").val()};
-                    @else
-                        var requestData = {'reference': $("#reference").val(), 'report': {{request("report")}}};
-                    @endif
-                    $.ajax(url, {
-                            method: 'GET',
-                            data: requestData, 
-                            complete: function(response){
-                                    console.log(response.responseJSON.result);
-                                    if(response.responseJSON.result == 'success') {
-                                        $("#code").val(response.responseJSON.code)
-                                    } else {
-                                        alert(response.responseJSON.error);
-                                    }
-                            }
-                    });
-                });
-
                @if(isset($roles_checker) && $roles_checker['has_edit_button'] == 0)
-               
-               $('button.btn, a.btn').attr('disabled', true);
-               @endif 
-
-
-                {{-- daterangepicker jQuery rimosso: ora gestito da Alpine.js dateRangeField --}}
+               document.querySelectorAll('button.btn, a.btn').forEach(function(el) { el.setAttribute('disabled', 'true'); el.style.pointerEvents = 'none'; el.style.opacity = '0.5'; });
+               @endif
 
                 // JS per rendere disabled una select già readonly (impedire l'apertura del menù)
                 @if(Session::has('disabledJsSelect'))
@@ -169,7 +133,7 @@
                     toolbar: 'undo redo | blocks | bold italic strikethrough forecolor backcolor blockquote | link image media | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat',
                     height: 250
                 });
-                $("document").find("div.tox-promotion").remove();
+                document.querySelectorAll('div.tox-promotion').forEach(function(el) { el.remove(); });
 
                 document.addEventListener('alpine:init', () => {
 

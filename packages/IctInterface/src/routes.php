@@ -35,7 +35,7 @@ Route::middleware(['web', 'islogged'])->group(function () {
     Route::resource('/profiles', 'Packages\IctInterface\Controllers\ProfileController');
     Route::resource('/roles', 'Packages\IctInterface\Controllers\ProfileRoleController');
     Route::resource('/options', 'Packages\IctInterface\Controllers\OptionController');
-    Route::get('/ref_numeric', ['Packages\IctInterface\Controllers\OptionController', 'codeNumberIncrement'])->name('ref_numeric');
+
 
     Route::get('/deleteattach', ['Packages\IctInterface\Controllers\AttachmentController', 'delete'])->name('delete.attachments');
 
