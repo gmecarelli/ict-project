@@ -1,0 +1,134 @@
+/**
+ * DateRange Picker (Alpine.js)
+ */
+
+.daterange-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1060;
+    display: flex;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 2px;
+    min-width: 480px;
+}
+
+.daterange-presets {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e5e5e5;
+    padding: 10px 0;
+    min-width: 150px;
+}
+
+.daterange-presets-title {
+    font-weight: bold;
+    font-size: .85rem;
+    color: #666;
+    padding: 4px 14px 8px;
+}
+
+.daterange-preset-item {
+    padding: 5px 14px;
+    font-size: .9rem;
+    color: #333;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.daterange-preset-item:hover {
+    background-color: #f0f0f0;
+    color: #000;
+    text-decoration: none;
+}
+
+.daterange-calendar {
+    padding: 10px 12px;
+    min-width: 280px;
+}
+
+.daterange-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.daterange-nav button {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 2px 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #555;
+}
+
+.daterange-nav button:hover {
+    background: #f0f0f0;
+}
+
+.daterange-month-label {
+    font-weight: bold;
+    font-size: .95rem;
+}
+
+.daterange-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: .8rem;
+    font-weight: bold;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.daterange-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    gap: 1px;
+}
+
+.daterange-days span {
+    padding: 6px 2px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: .85rem;
+    line-height: 1.4;
+}
+
+.daterange-days span:hover {
+    background-color: #e9ecef;
+}
+
+.daterange-days span.other-month {
+    color: #ccc;
+}
+
+.daterange-days span.today {
+    font-weight: bold;
+    border: 1px solid var(--custom-bg, #4d7496);
+}
+
+.daterange-days span.in-range {
+    background-color: #d6e9f8;
+}
+
+.daterange-days span.range-start,
+.daterange-days span.range-end {
+    background-color: var(--custom-bg, #4d7496);
+    color: #fff;
+    font-weight: bold;
+}
+
+.daterange-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e5e5e5;
+}

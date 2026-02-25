@@ -73,6 +73,66 @@
         @error($wireModel) <div class="invalid-feedback">{{ $message }}</div> @enderror
         @break
 
+    @case('daterange')
+        <label for="{{ $field['name'] }}" class="form-label">{{ $field['label'] }}</label>
+        <div x-data="dateRangeField('{{ $wireModel }}')"
+             @click.outside="isOpen = false"
+             class="position-relative">
+            <div class="input-group">
+                <input type="text"
+                    class="{{ $field['class'] ?? 'form-control' }}"
+                    x-model="displayValue"
+                    @click="toggleCalendar()"
+                    id="{{ $field['name'] }}"
+                    placeholder="dd/mm/yyyy - dd/mm/yyyy"
+                    readonly
+                    {{ $isRequired() ? 'required' : '' }}
+                >
+                <button type="button" class="btn btn-outline-secondary" @click="clear()" x-show="displayValue" title="Pulisci">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{-- Dropdown calendario --}}
+            <div x-show="isOpen" x-transition.opacity class="daterange-dropdown shadow">
+                <div class="daterange-presets">
+                    <div class="daterange-presets-title">Range rapidi</div>
+                    <a href="#" @click.prevent="setPreset('today')" class="daterange-preset-item">Oggi</a>
+                    <a href="#" @click.prevent="setPreset('yesterday')" class="daterange-preset-item">Ieri</a>
+                    <a href="#" @click.prevent="setPreset('last7')" class="daterange-preset-item">Ultimi 7 giorni</a>
+                    <a href="#" @click.prevent="setPreset('last30')" class="daterange-preset-item">Ultimi 30 giorni</a>
+                    <a href="#" @click.prevent="setPreset('thisMonth')" class="daterange-preset-item">Questo mese</a>
+                    <a href="#" @click.prevent="setPreset('lastMonth')" class="daterange-preset-item">Mese scorso</a>
+                    <a href="#" @click.prevent="setPreset('thisYear')" class="daterange-preset-item">Quest'anno</a>
+                </div>
+                <div class="daterange-calendar">
+                    <div class="daterange-nav">
+                        <button type="button" @click="prevMonth()">&laquo;</button>
+                        <span class="daterange-month-label" x-text="monthLabel"></span>
+                        <button type="button" @click="nextMonth()">&raquo;</button>
+                    </div>
+                    <div class="daterange-weekdays">
+                        <span>Lu</span><span>Ma</span><span>Me</span><span>Gi</span><span>Ve</span><span>Sa</span><span>Do</span>
+                    </div>
+                    <div class="daterange-days">
+                        <template x-for="(dayObj, idx) in calendarDays" :key="idx">
+                            <span
+                                :class="dayClass(dayObj)"
+                                @click="selectDay(dayObj)"
+                                @mouseenter="hoverDate = dayObj.date"
+                                x-text="dayObj.day"
+                            ></span>
+                        </template>
+                    </div>
+                    <div class="daterange-footer">
+                        <small class="text-muted" x-show="selectingEnd">Seleziona la data di fine</small>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" @click="clear()">Pulisci</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @error($wireModel) <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+        @break
+
     @case('textarea')
         <label for="{{ $field['name'] }}" class="form-label">{{ $field['label'] }}</label>
         <textarea 

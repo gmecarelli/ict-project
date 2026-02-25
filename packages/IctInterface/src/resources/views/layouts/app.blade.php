@@ -34,9 +34,7 @@
     {{-- <script src="{{ asset('js/multiselect.js') }}" defer></script> --}}
     {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> --}}
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    {{-- daterangepicker rimosso: sostituito dal componente Alpine.js dateRangeField (type=daterange) --}}
     {{-- <script type="text/javascript" src="{{asset('ict-assets/js/jquery.slimscroll.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('ict-assets/js/jquery.slimscroll.horizontal.min.js')}}"></script> --}}
 
@@ -49,6 +47,7 @@
     <link href="{{ asset('ict-assets/css/app.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('ict-assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('ict-assets/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('ict-assets/css/daterange.css') }}">
     <link rel="stylesheet" href="{{ asset('ict-assets/css/fontawesome/css/all.min.css') }}">
     
     <!-- Imposto la variabile di colore da usare nello style.css -->
@@ -146,30 +145,7 @@
                @endif 
 
 
-                $('.datapicker').daterangepicker({
-                    ranges: {
-                        'Today': [moment(), moment()],
-                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                        'This Month': [moment().startOf('month'), moment().endOf('month')],
-                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                        'This Year': [moment().startOf('year'), moment().endOf('year')],
-                    },
-                    autoUpdateInput: false,
-                    locale: {
-                        cancelLabel: 'Clear'
-                    }
-                });
-
-                $('.datapicker').on('apply.daterangepicker', function(ev, picker) {
-                    $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
-                });
-
-                $('.datapicker').on('cancel.daterangepicker', function(ev, picker) {
-                    let id = ev.currentTarget.id;
-                    $(this).val('');
-                });
+                {{-- daterangepicker jQuery rimosso: ora gestito da Alpine.js dateRangeField --}}
 
                 // JS per rendere disabled una select già readonly (impedire l'apertura del menù)
                 @if(Session::has('disabledJsSelect'))
@@ -270,6 +246,179 @@
                                 this.$wire.set('formData.' + fieldName, newQuery);
                                 this.query = newQuery;
                             }, 300);
+                        }
+                    }));
+
+                    /**
+                     * dateRangeField — Componente Alpine.js per selezione range di date.
+                     * Sostituisce il plugin jQuery daterangepicker.
+                     * Output formato: dd/mm/yyyy - dd/mm/yyyy
+                     *
+                     * @param {string} wireModel - Nome del wire:model Livewire (es. 'formData.date_range')
+                     */
+                    Alpine.data('dateRangeField', (wireModel) => ({
+                        isOpen: false,
+                        startDate: null,
+                        endDate: null,
+                        selectingEnd: false,
+                        currentMonth: new Date().getMonth(),
+                        currentYear: new Date().getFullYear(),
+                        displayValue: '',
+                        hoverDate: null,
+
+                        init() {
+                            const val = this.$wire.get(wireModel) || '';
+                            if (val) this._parseValue(val);
+                        },
+
+                        _parseValue(val) {
+                            const parts = val.split(' - ');
+                            if (parts.length === 2) {
+                                this.startDate = this._toDate(parts[0].trim());
+                                this.endDate = this._toDate(parts[1].trim());
+                                if (this.startDate && this.endDate) {
+                                    this.displayValue = val;
+                                    this.currentMonth = this.startDate.getMonth();
+                                    this.currentYear = this.startDate.getFullYear();
+                                }
+                            }
+                        },
+
+                        _toDate(str) {
+                            const p = str.split('/');
+                            if (p.length !== 3) return null;
+                            const d = new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+                            return isNaN(d.getTime()) ? null : d;
+                        },
+
+                        _fmt(date) {
+                            const dd = String(date.getDate()).padStart(2, '0');
+                            const mm = String(date.getMonth() + 1).padStart(2, '0');
+                            return dd + '/' + mm + '/' + date.getFullYear();
+                        },
+
+                        _sameDay(a, b) {
+                            return a && b &&
+                                a.getFullYear() === b.getFullYear() &&
+                                a.getMonth() === b.getMonth() &&
+                                a.getDate() === b.getDate();
+                        },
+
+                        toggleCalendar() { this.isOpen = !this.isOpen; },
+
+                        get daysInMonth() {
+                            return new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
+                        },
+
+                        get firstDayOfWeek() {
+                            const d = new Date(this.currentYear, this.currentMonth, 1).getDay();
+                            return d === 0 ? 6 : d - 1; // Lunedì = 0
+                        },
+
+                        get calendarDays() {
+                            const days = [];
+                            const prev = new Date(this.currentYear, this.currentMonth, 0).getDate();
+                            for (let i = this.firstDayOfWeek - 1; i >= 0; i--) {
+                                days.push({ day: prev - i, cur: false, date: new Date(this.currentYear, this.currentMonth - 1, prev - i) });
+                            }
+                            for (let i = 1; i <= this.daysInMonth; i++) {
+                                days.push({ day: i, cur: true, date: new Date(this.currentYear, this.currentMonth, i) });
+                            }
+                            const rest = 42 - days.length;
+                            for (let i = 1; i <= rest; i++) {
+                                days.push({ day: i, cur: false, date: new Date(this.currentYear, this.currentMonth + 1, i) });
+                            }
+                            return days;
+                        },
+
+                        get monthLabel() {
+                            const name = new Date(this.currentYear, this.currentMonth)
+                                .toLocaleString('it-IT', { month: 'long' });
+                            return name.charAt(0).toUpperCase() + name.slice(1) + ' ' + this.currentYear;
+                        },
+
+                        prevMonth() {
+                            if (this.currentMonth === 0) { this.currentMonth = 11; this.currentYear--; }
+                            else { this.currentMonth--; }
+                        },
+
+                        nextMonth() {
+                            if (this.currentMonth === 11) { this.currentMonth = 0; this.currentYear++; }
+                            else { this.currentMonth++; }
+                        },
+
+                        selectDay(dayObj) {
+                            if (!this.selectingEnd || !this.startDate) {
+                                this.startDate = dayObj.date;
+                                this.endDate = null;
+                                this.selectingEnd = true;
+                            } else {
+                                if (dayObj.date < this.startDate) {
+                                    this.endDate = this.startDate;
+                                    this.startDate = dayObj.date;
+                                } else {
+                                    this.endDate = dayObj.date;
+                                }
+                                this.selectingEnd = false;
+                                this._apply();
+                            }
+                        },
+
+                        dayClass(dayObj) {
+                            const d = dayObj.date;
+                            const cls = [];
+                            if (!dayObj.cur) cls.push('other-month');
+                            if (this._sameDay(d, new Date())) cls.push('today');
+                            if (this._sameDay(d, this.startDate)) cls.push('range-start');
+                            if (this._sameDay(d, this.endDate)) cls.push('range-end');
+
+                            // Highlight range (incluso hover durante selezione)
+                            if (this.startDate) {
+                                const end = this.endDate || (this.selectingEnd && this.hoverDate ? this.hoverDate : null);
+                                if (end) {
+                                    let s = this.startDate, e = end;
+                                    if (s > e) { const t = s; s = e; e = t; }
+                                    if (d >= s && d <= e) cls.push('in-range');
+                                }
+                            }
+                            return cls.join(' ');
+                        },
+
+                        _apply() {
+                            if (this.startDate && this.endDate) {
+                                this.displayValue = this._fmt(this.startDate) + ' - ' + this._fmt(this.endDate);
+                                this.$wire.set(wireModel, this.displayValue);
+                                this.isOpen = false;
+                            }
+                        },
+
+                        setPreset(key) {
+                            const t = new Date(); t.setHours(0,0,0,0);
+                            const presets = {
+                                today:     [new Date(t), new Date(t)],
+                                yesterday: [(() => { const d = new Date(t); d.setDate(d.getDate()-1); return d; })(), (() => { const d = new Date(t); d.setDate(d.getDate()-1); return d; })()],
+                                last7:     [(() => { const d = new Date(t); d.setDate(d.getDate()-6); return d; })(), new Date(t)],
+                                last30:    [(() => { const d = new Date(t); d.setDate(d.getDate()-29); return d; })(), new Date(t)],
+                                thisMonth: [new Date(t.getFullYear(), t.getMonth(), 1), new Date(t.getFullYear(), t.getMonth()+1, 0)],
+                                lastMonth: [new Date(t.getFullYear(), t.getMonth()-1, 1), new Date(t.getFullYear(), t.getMonth(), 0)],
+                                thisYear:  [new Date(t.getFullYear(), 0, 1), new Date(t.getFullYear(), 11, 31)],
+                            };
+                            const p = presets[key];
+                            if (p) {
+                                this.startDate = p[0];
+                                this.endDate = p[1];
+                                this.selectingEnd = false;
+                                this._apply();
+                            }
+                        },
+
+                        clear() {
+                            this.startDate = null;
+                            this.endDate = null;
+                            this.displayValue = '';
+                            this.selectingEnd = false;
+                            this.$wire.set(wireModel, '');
+                            this.isOpen = false;
                         }
                     }));
 
