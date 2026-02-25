@@ -12,7 +12,6 @@
 
     <!-- Scripts -->
 
-    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
     <script src="{{ asset('ict-assets/js/bootstrap.bundle.min.js') }}"></script>
     {{-- Compatibility shim: mappa attributi BS4 (data-toggle, data-dismiss, data-target) in BS5 (data-bs-*) --}}
     <script>
