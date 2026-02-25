@@ -1,0 +1,163 @@
+body,
+div,
+table,
+p,
+a,
+nav {
+    font-size: .85rem;
+}
+
+html,
+body,
+.fill {
+    height: 100%;
+    min-height: 100%;
+}
+
+
+/**
+ * Menu
+ */
+
+.card,
+.form-control,
+.btn {
+    border-radius: 0 !important;
+}
+
+#accordionMenu {
+    background-color: #F7F7F7;
+}
+
+#accordionMenu .card,
+#accordionMenu .card-header,
+#accordionMenu .card-body {
+    padding: 0;
+}
+
+#accordionMenu .card-header button {
+    font-size: .95rem !important;
+    font-weight: bold;
+    color: #666;
+    padding: 12px;
+}
+
+#accordionMenu .card-header {
+    border-bottom: 2px solid #CCC;
+    font-size: .9rem;
+}
+
+#accordionMenu h3 {
+    padding: 5px;
+    float: left;
+}
+
+.icon-menu {
+    width: 5px;
+    height: 5px;
+    padding: 5px;
+}
+
+.icon-menu-left {
+    float: left;
+}
+
+.icon-menu-right {
+    float: right;
+}
+
+#accordionMenu .nav-item {
+    background: #FAFAFA;
+    border-bottom: 1px solid #CCC;
+    padding: 15px;
+}
+
+#accordionMenu .nav-link {
+    color: #000;
+}
+
+.navbar-nav .nav-link {
+    padding: 0 15px;
+}
+
+.bg-blue {
+    background-color: #4D7496;
+    color: #FFF;
+}
+
+.bg-blue a {
+    color: #FFF !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: transparent;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+
+.action-item:hover,
+.action-item:focus {
+    background-color: transparent;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.nav-sidebar {
+    overflow: hidden;
+    height: 100%;
+}
+
+.text-left-p10 {
+    padding: 0 10px;
+}
+
+.active-menu {
+    background-color: #4D7496 !important;
+}
+
+.active-menu a {
+    color: #FFFFFF !important;
+}
+
+.btn {
+    font-weight: 100 !important;
+    padding: .15rem .5rem;
+    font-size: .8rem !important;
+}
+
+.btn-primary {
+    background-color: #4D77CC !important;
+}
+
+.form-control-button {
+    clear: both;
+    border: none;
+}
+
+.clearbox {
+    clear: both;
+}
+
+.form-field-float {
+    float: left;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.dropdown {
+    position: relative;
+    /* display: inline-block !important; */
+    background: #FAFAFA;
+    width: 100%;
+    height: 150px;
+    padding: 5px;
+    overflow-y: auto;
+}

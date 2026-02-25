@@ -1,0 +1,1 @@
+<a title="{{$label}}" href="{{$route}}?{{$_SERVER['QUERY_STRING']}}&ext={{$format}}" class="btn btn-{{$btn}} p-2 border"><i class="fas fa-download"></i> {{$label}}</a>

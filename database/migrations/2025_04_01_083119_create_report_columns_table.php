@@ -1,0 +1,886 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::disableForeignKeyConstraints();
+
+        Schema::create('report_columns', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('report_id')->unsigned();
+            $table->string('label', 150)->nullable();
+            $table->string('field', 150);
+            $table->string('type', 150)->default('string')->index();
+            $table->string('type_params')->nullable()->comment('Parametri assegnati in base al type (definito nella classe). Es: per type=select il valore sarà [nome_tabella],[label],[id]');
+            $table->integer('position')->default(10);
+            $table->integer('is_enabled')->default(1);
+            $table->integer('is_crypted')->default(0);
+            $table->timestamps();
+
+            $table->unique(['field', 'report_id', 'label']);
+            $table->index('field');
+            $table->foreign('report_id')->references('id')->on('reports')->onDelete('no action')->onUpdate('no action');
+        });
+
+        // Insert initial data
+        DB::table('report_columns')->insert([
+            [
+                'id' => 1,
+                'report_id' => 1,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 2,
+                'report_id' => 1,
+                'label' => 'Titolo',
+                'field' => 'title',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 3,
+                'report_id' => 1,
+                'label' => 'Tooltip',
+                'field' => 'tooltip',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 4,
+                'report_id' => 1,
+                'label' => 'Data creazione',
+                'field' => 'created_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 20,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2023-08-31 09:45:34'
+            ],
+            [
+                'id' => 5,
+                'report_id' => 1,
+                'label' => 'Data aggiornamento',
+                'field' => 'updated_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 25,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2023-08-31 09:45:42'
+            ],
+            [
+                'id' => 6,
+                'report_id' => 1,
+                'label' => 'Icona',
+                'field' => 'icon',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 15,
+                'is_enabled' => 1,
+                'created_at' => '2023-08-31 09:45:13',
+                'updated_at' => '2023-08-31 09:45:13'
+            ],
+            [
+                'id' => 7,
+                'report_id' => 2,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'link',
+                'type_params' => 'route:reportcol,filter:report_id,title:Vedi le colonne del report',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2023-08-31 09:45:13',
+                'updated_at' => '2023-08-31 09:45:13'
+            ],
+            [
+                'id' => 8,
+                'report_id' => 2,
+                'label' => 'Titolo',
+                'field' => 'title',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 9,
+                'report_id' => 2,
+                'label' => 'Menu',
+                'field' => 'menu_id',
+                'type' => 'enum',
+                'type_params' => 'table:menus,code:id,label:title',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-07-12 11:05:50'
+            ],
+            [
+                'id' => 10,
+                'report_id' => 2,
+                'label' => 'Route',
+                'field' => 'route',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 11,
+                'report_id' => 2,
+                'label' => 'Tabella',
+                'field' => 'table',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 12,
+                'report_id' => 2,
+                'label' => 'Template Blade',
+                'field' => 'blade',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 13,
+                'report_id' => 2,
+                'label' => 'Posizione',
+                'field' => 'order',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 14,
+                'report_id' => 2,
+                'label' => 'Url',
+                'field' => 'href_url',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 15,
+                'report_id' => 2,
+                'label' => 'Nuovi inserimenti',
+                'field' => 'has_create_button',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 16,
+                'report_id' => 2,
+                'label' => 'Modificabile',
+                'field' => 'has_edit_button',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 17,
+                'report_id' => 2,
+                'label' => 'Visualizzabile nel menu',
+                'field' => 'is_show_menu',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 18,
+                'report_id' => 2,
+                'label' => 'Abilitato',
+                'field' => 'is_enabled',
+                'type' => 'enum',
+                'type_params' => 'reference:ED',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 19,
+                'report_id' => 2,
+                'label' => 'Data creazione',
+                'field' => 'created_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 20,
+                'report_id' => 2,
+                'label' => 'Data aggiornamento',
+                'field' => 'updated_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-22 12:05:24',
+                'updated_at' => '2021-06-22 12:05:24'
+            ],
+            [
+                'id' => 21,
+                'report_id' => 3,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:14:00',
+                'updated_at' => '2021-06-26 13:14:00'
+            ],
+            [
+                'id' => 22,
+                'report_id' => 3,
+                'label' => 'Report Id',
+                'field' => 'report_id',
+                'type' => 'enum',
+                'type_params' => 'table:reports,code:id,label:title',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:14:00',
+                'updated_at' => '2021-06-26 13:14:00'
+            ],
+            [
+                'id' => 23,
+                'report_id' => 3,
+                'label' => 'Label',
+                'field' => 'label',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:16:17',
+                'updated_at' => '2021-06-26 13:16:17'
+            ],
+            [
+                'id' => 24,
+                'report_id' => 3,
+                'label' => 'Campo tabella',
+                'field' => 'field',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 25,
+                'report_id' => 3,
+                'label' => 'Tipo dato',
+                'field' => 'type',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 26,
+                'report_id' => 3,
+                'label' => 'Parametri tipo',
+                'field' => 'type_params',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 27,
+                'report_id' => 3,
+                'label' => 'Posizione',
+                'field' => 'position',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 28,
+                'report_id' => 3,
+                'label' => 'Creato il',
+                'field' => 'created_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 29,
+                'report_id' => 3,
+                'label' => 'Aggiornato il',
+                'field' => 'updated_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 30,
+                'report_id' => 4,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 1,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 31,
+                'report_id' => 4,
+                'label' => 'Report Id',
+                'field' => 'report_id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 32,
+                'report_id' => 4,
+                'label' => 'Nome',
+                'field' => 'name',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 33,
+                'report_id' => 4,
+                'label' => 'Titolo',
+                'field' => 'title',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 34,
+                'report_id' => 4,
+                'label' => 'Tipo',
+                'field' => 'type',
+                'type' => 'enum',
+                'type_params' => 'reference:TYPEFORM',
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 35,
+                'report_id' => 4,
+                'label' => 'FormChild Id',
+                'field' => 'id_child',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 36,
+                'report_id' => 4,
+                'label' => 'Creato il',
+                'field' => 'created_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 37,
+                'report_id' => 4,
+                'label' => 'Aggiornato il',
+                'field' => 'updated_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 38,
+                'report_id' => 4,
+                'label' => 'Tabella',
+                'field' => 'table',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 39,
+                'report_id' => 5,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 1,
+                'is_enabled' => 1,
+                'created_at' => '2021-06-26 13:18:26',
+                'updated_at' => '2021-06-26 13:18:26'
+            ],
+            [
+                'id' => 40,
+                'report_id' => 5,
+                'label' => 'Form',
+                'field' => 'form_id',
+                'type' => 'enum',
+                'type_params' => "table:forms,code:id,label:title",
+                'position' => 5,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 41,
+                'report_id' => 5,
+                'label' => 'Label',
+                'field' => 'label',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 42,
+                'report_id' => 5,
+                'label' => 'Nome',
+                'field' => 'name',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 15,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 43,
+                'report_id' => 5,
+                'label' => 'Tipo',
+                'field' => 'type',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 20,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 44,
+                'report_id' => 5,
+                'label' => 'Permessi',
+                'field' => 'rules',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 25,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 45,
+                'report_id' => 5,
+                'label' => 'Skip',
+                'field' => 'is_guarded',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 30,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 46,
+                'report_id' => 5,
+                'label' => 'Disponibile',
+                'field' => 'is_available',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 35,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 47,
+                'report_id' => 5,
+                'label' => 'Enabled',
+                'field' => 'is_enabled',
+                'type' => 'enum',
+                'type_params' => 'reference:ED',
+                'position' => 40,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 48,
+                'report_id' => 5,
+                'label' => 'Creato il',
+                'field' => 'created_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 45,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 49,
+                'report_id' => 5,
+                'label' => 'Aggiornato il',
+                'field' => 'updated_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 50,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 50,
+                'report_id' => 5,
+                'label' => 'Posizione',
+                'field' => 'position',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 55,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 51,
+                'report_id' => 6,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 1,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 52,
+                'report_id' => 6,
+                'label' => 'Nome',
+                'field' => 'name',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 65,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 53,
+                'report_id' => 6,
+                'label' => 'Enabled',
+                'field' => 'is_enabled',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 70,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 54,
+                'report_id' => 6,
+                'label' => 'Creato il',
+                'field' => 'created_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 75,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 55,
+                'report_id' => 6,
+                'label' => 'Aggiornato il',
+                'field' => 'updated_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 80,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 56,
+                'report_id' => 7,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 1,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 57,
+                'report_id' => 7,
+                'label' => 'Profilo',
+                'field' => 'profile_id',
+                'type' => 'enum',
+                'type_params' => 'table:profiles,code:id,label:name',
+                'position' => 90,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 58,
+                'report_id' => 7,
+                'label' => 'Report',
+                'field' => 'report_id',
+                'type' => 'enum',
+                'type_params' => 'table:reports,code:id,label:title',
+                'position' => 95,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 59,
+                'report_id' => 7,
+                'label' => 'Btn new',
+                'field' => 'has_create_button',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 100,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 60,
+                'report_id' => 7,
+                'label' => 'Btn edit',
+                'field' => 'has_edit_button',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 105,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 61,
+                'report_id' => 7,
+                'label' => 'Enabled',
+                'field' => 'is_enabled',
+                'type' => 'enum',
+                'type_params' => 'reference:YN',
+                'position' => 110,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 62,
+                'report_id' => 7,
+                'label' => 'Creato il',
+                'field' => 'created_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 115,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 63,
+                'report_id' => 7,
+                'label' => 'Aggiornato il',
+                'field' => 'updated_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 120,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 64,
+                'report_id' => 8,
+                'label' => '#',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 1,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 65,
+                'report_id' => 8,
+                'label' => 'Code / key',
+                'field' => 'code',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 5,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 66,
+                'report_id' => 8,
+                'label' => 'Label',
+                'field' => 'label',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 67,
+                'report_id' => 8,
+                'label' => 'Riferimento',
+                'field' => 'reference',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 15,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 68,
+                'report_id' => 8,
+                'label' => 'Icona',
+                'field' => 'icon',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 20,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 69,
+                'report_id' => 8,
+                'label' => 'Classe',
+                'field' => 'class',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 25,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ],
+            [
+                'id' => 70,
+                'report_id' => 8,
+                'label' => 'Abilitato',
+                'field' => 'is_enabled',
+                'type' => 'enum',
+                'type_params' => 'reference:ED',
+                'position' => 30,
+                'is_enabled' => 1,
+                'created_at' => '2021-07-12 11:24:51',
+                'updated_at' => '2021-07-12 11:24:51'
+            ]
+        ]);
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('report_columns');
+    }
+};

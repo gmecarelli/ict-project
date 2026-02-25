@@ -1,0 +1,395 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('forms', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('report_id')->unsigned();
+            $table->string('name', 50)->nullable()->comment('Nome e id del form che corrisponde al prefisso della route. Quindi fondamentale per il funzionamento del link');
+            $table->string('title', 45)->nullable();
+            $table->string('table', 50)->nullable()->comment('tabella di default dove vanno salvati i dati');
+            $table->integer('clean_at')->default(6)->comment('Definisce ogni quanti campi va inserita una nuova riga di campi (div con class=row o form-group)');
+            $table->string('id_modal', 100)->nullable()->comment('Indica se il form è aperto in modale. Il valore sarà l\'id della modale stessa. Se null apre su nuova pagina');
+            $table->string('modal_width', 10)->default('50%')->comment('Larghezza della modale (utilizzato solo se on_modal!=null). Il valore sarà un numero da 1 a 100 seguito da una unità di misura valida (px, %, em, etc.)');
+            $table->string('method', 10)->default('POST')->comment('Options: metodo invio dati e questo è considerato solo quando url IS NOT NULL, altrimento viene preso in automatico per salvare i dati con CRUD');
+            $table->string('type', 10)->nullable()->comment('definisce il tipo di form');
+            $table->string('dynamic_attach')->nullable();
+            $table->string('url_load')->nullable();
+            $table->string('url_save')->nullable();
+            $table->string('class')->nullable();
+            $table->string('language_name')->nullable();
+            $table->string('template')->nullable();
+            $table->string('data')->nullable();
+            $table->boolean('is_enabled')->default(true);
+            $table->foreignId('id_child')->nullable();
+            $table->timestamps();
+        });
+
+        // Inserimento dei dati iniziali
+        DB::table('forms')->insert([
+            [
+                'id' => 1,
+                'report_id' => 1,
+                'name' => 'menu',
+                'title' => 'Configurazione Menu',
+                'table' => 'menus',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'form-horizontal',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-06-10 17:06:05',
+                'updated_at' => '2021-07-16 12:10:32'
+            ],
+            [
+                'id' => 2,
+                'report_id' => 2,
+                'name' => 'report',
+                'title' => 'Conf. Report',
+                'table' => 'reports',
+                'clean_at' => 20,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'form-horizontal',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => 4,
+                'created_at' => '2021-06-10 17:06:05',
+                'updated_at' => '2023-08-10 13:15:08'
+            ],
+            [
+                'id' => 3,
+                'report_id' => 1,
+                'name' => 'menu',
+                'title' => 'filtro menu',
+                'table' => 'menus',
+                'clean_at' => 3,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'filter',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-06-10 17:06:05',
+                'updated_at' => '2021-07-14 08:27:30'
+            ],
+            [
+                'id' => 4,
+                'report_id' => 3,
+                'name' => 'reportcol',
+                'title' => 'Colonne report',
+                'table' => 'report_columns',
+                'clean_at' => 6,
+                'id_modal' => 'modalReportCols',
+                'modal_width' => '70%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => 'call.load.reportcols',
+                'url_save' => 'call.save.reportcols',
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-06-10 17:06:05',
+                'updated_at' => '2021-07-13 12:33:08'
+            ],
+            [
+                'id' => 5,
+                'report_id' => 2,
+                'name' => 'report',
+                'title' => 'Filtro report',
+                'table' => 'reports',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'filter',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-06-10 17:06:05',
+                'updated_at' => '2021-07-14 08:27:41'
+            ],
+            [
+                'id' => 6,
+                'report_id' => 3,
+                'name' => 'reportcol',
+                'title' => 'filtro report cols',
+                'table' => 'report_columns',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'filter',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-06-10 17:06:05',
+                'updated_at' => '2023-09-04 13:14:51'
+            ],
+            [
+                'id' => 7,
+                'report_id' => 4,
+                'name' => 'form',
+                'title' => 'Edit Form',
+                'table' => 'forms',
+                'clean_at' => 4,
+                'id_modal' => 'modaFormItems',
+                'modal_width' => '80%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => 'call.load.formitems',
+                'url_save' => 'call.save.formitems',
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => 8,
+                'created_at' => '2021-07-12 13:06:05',
+                'updated_at' => '2021-12-20 11:41:53'
+            ],
+            [
+                'id' => 8,
+                'report_id' => 5,
+                'name' => 'formfield',
+                'title' => 'Edit form fields',
+                'table' => 'form_fields',
+                'clean_at' => 5,
+                'id_modal' => 'modaFormItems',
+                'modal_width' => '80%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => 'call.load.formitems',
+                'url_save' => 'call.save.formitems',
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-07-12 13:06:05',
+                'updated_at' => '2021-07-26 11:52:41'
+            ],
+            [
+                'id' => 9,
+                'report_id' => 4,
+                'name' => 'form',
+                'title' => 'Filtro form',
+                'table' => 'forms',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'filter',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-07-13 12:21:10',
+                'updated_at' => '2024-10-21 12:54:19'
+            ],
+            [
+                'id' => 10,
+                'report_id' => 5,
+                'name' => 'formfield',
+                'title' => 'Fields Filter',
+                'table' => 'form_fields',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'filter',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2021-07-18 14:32:31',
+                'updated_at' => '2021-07-26 11:52:35'
+            ],
+            [
+                'id' => 11,
+                'report_id' => 6,
+                'name' => 'profiles',
+                'title' => 'form Profili',
+                'table' => 'profiles',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:form.profile',
+                'is_enabled' => 1,
+                'id_child' => 12,
+                'created_at' => '2022-02-26 14:33:12',
+                'updated_at' => '2022-02-26 17:56:17'
+            ],
+            [
+                'id' => 12,
+                'report_id' => 7,
+                'name' => 'roles',
+                'title' => 'Ruoli e permessi',
+                'table' => 'profile_roles',
+                'clean_at' => 5,
+                'id_modal' => 'modalRoles',
+                'modal_width' => '80%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => 'call.load.role',
+                'url_save' => 'call.save.role',
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2022-02-26 15:39:43',
+                'updated_at' => '2024-06-11 10:00:28'
+            ],
+            [
+                'id' => 13,
+                'report_id' => 7,
+                'name' => 'roles',
+                'title' => 'Filtro ruoli profili',
+                'table' => 'profile_roles',
+                'clean_at' => 3,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'GET',
+                'type' => 'filter',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2022-02-26 15:39:43',
+                'updated_at' => '2022-02-26 15:39:43'
+            ],
+            [
+                'id' => 14,
+                'report_id' => 8,
+                'name' => 'options',
+                'title' => 'Configurazione parametri utilità',
+                'table' => 'options',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2022-02-26 15:39:43',
+                'updated_at' => '2022-02-26 15:39:43'
+            ],
+            [
+                'id' => 15,
+                'report_id' => 8,
+                'name' => 'options',
+                'title' => 'Filter parametri utilità',
+                'table' => 'options',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'filter',
+                'dynamic_attach' => null,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2022-02-26 15:39:43',
+                'updated_at' => '2022-02-26 15:39:43'
+            ]
+        ]);
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('forms');
+    }
+};
