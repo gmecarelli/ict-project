@@ -29,7 +29,7 @@
     });
     </script>
     <script src="{{ asset('ict-assets/js/app.js') }}" defer></script>
-    {{-- <script src="{{ asset('ict-assets/js/common.js') }}" defer></script> --}} {{-- Sostituito da Livewire ChildFormComponent (removeItem) --}}
+
 
     {{-- <script src="{{ asset('js/multiselect.js') }}" defer></script> --}}
     {{-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script> --}}
