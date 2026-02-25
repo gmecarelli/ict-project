@@ -57,15 +57,6 @@
         @if(isset($itemChildFormData))
                 @include('ict::layouts.modal')
         @endif
-        {{-- @include('ict::layouts.delete-js') --}} {{-- Sostituito da Livewire ict-delete-confirm --}}
-    <script>
-        {{-- @if(isset($addChildRoute))
-                @include('ict::layouts.form-child-js')
-        @endif --}} {{-- Sostituito da Livewire ChildFormComponent --}}
-
-        {{-- @include('ict::layouts.modal-js') --}} {{-- Sostituito da Livewire ModalFormComponent --}}
-
-    </script>
     @endif
   @endif
 

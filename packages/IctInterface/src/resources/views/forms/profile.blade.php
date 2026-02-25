@@ -129,23 +129,12 @@
 
 @section('footer')
   @parent
-  {{-- @include("ict::layouts.modal-users") --}} {{-- Sostituito da Livewire ict-user-profile-manager --}}
-
   @if(!isset($useLivewireForm) || !$useLivewireForm)
     @if(isset($id_child) && $id_child)
         @include('ict::layouts.modal-item')
         @if(isset($itemChildFormData))
                 @include('ict::layouts.modal')
-                {{-- @include('ict::layouts.delete-js') --}} {{-- Sostituito da Livewire ict-delete-confirm --}}
         @endif
-
-        <script>
-            {{-- @if(isset($addChildRoute))
-                    @include('ict::layouts.form-child-js')
-            @endif --}} {{-- Sostituito da Livewire ChildFormComponent --}}
-
-            {{-- @include('ict::layouts.modal-js') --}} {{-- Sostituito da Livewire ModalFormComponent --}}
-        </script>
     @endif
   @endif
 @endsection

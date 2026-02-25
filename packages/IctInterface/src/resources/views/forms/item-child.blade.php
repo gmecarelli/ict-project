@@ -133,12 +133,6 @@
     <!-- HTML della model degli item -->
     @include('ict::layouts.modal-item')
 
-      <script>
-        {{-- @include('ict::layouts.form-child-js') --}} {{-- Sostituito da Livewire ChildFormComponent --}}
-
-         {{-- @include('ict::layouts.modal-js') --}} {{-- Sostituito da Livewire ModalFormComponent --}}
-
-      </script>
     @endif
 
     @if (isset($itemChildFormData) && $itemChildFormData)
