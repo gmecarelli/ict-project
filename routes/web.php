@@ -20,13 +20,7 @@ require base_path('packages/IctInterface/src/routes.php');
 
 Route::middleware(['web', 'islogged'])->group(function () {
     Route::resource('/books', BookController::class);
-    Route::resource('/authors', BookController::class);
-
-    Route::prefix('modal')->group(function () {
-        Route::get('/loadbook', [BookController::class, 'loadModal'])->name('load.books');
-        Route::post('/savebook', [BookController::class, 'saveModal'])->name('save.books');
-
-    });
+    Route::resource('/authors', AuthorController::class);
 
     Route::prefix('export')->group(function () {
         Route::get('books', [BookController::class, 'exportBooks'])->name('export.books');

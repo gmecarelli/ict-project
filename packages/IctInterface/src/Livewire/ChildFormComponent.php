@@ -173,12 +173,18 @@ class ChildFormComponent extends Component
     {
         $newItem = [];
         foreach ($this->childFields as $field) {
-            if ($field['type'] === 'hidden' && $field['name'] === $this->foreignKey) {
+            if ($field['name'] === $this->foreignKey) {
                 $newItem[$field['name']] = $this->parentRecordId;
             } else {
                 $newItem[$field['name']] = $field['default_value'] ?? null;
             }
         }
+
+        // Ensure FK is always set even if not among child form fields
+        if ($this->foreignKey && !isset($newItem[$this->foreignKey])) {
+            $newItem[$this->foreignKey] = $this->parentRecordId;
+        }
+
         $this->items[] = $newItem;
     }
 
