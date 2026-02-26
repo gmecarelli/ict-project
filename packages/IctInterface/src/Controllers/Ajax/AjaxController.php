@@ -3,15 +3,10 @@
 /**
  * AjaxController
  *
- * Controller per le chiamate AJAX.
- *
- * I metodi che caricavano form tramite kris/laravel-form-builder sono stati
- * sostituiti dai componenti Livewire:
- * - loadChildFormField / loadChildReportCols → ict-child-form
- * - loadFormRole / loadFormItemsForm / loadReportColsForm → ict-modal-form
- *
- * I metodi save (saveFormRole, saveFormItemsForm, saveReportColsForm)
- * sono ancora funzionanti tramite saveModalForm() di IctController.
+ * Controller per le chiamate AJAX residue.
+ * Metodi save (saveFormRole, saveFormItemsForm, saveReportColsForm)
+ * funzionanti tramite saveModalForm() di IctController.
+ * searchUsers per la ricerca utenti nei profili.
  *
  * @author: Giorgio Mecarelli
  */
@@ -54,26 +49,6 @@ class AjaxController extends IctController
     }
 
     /**
-     * @deprecated Sostituito dal componente Livewire ict-child-form
-     */
-    public function loadChildFormField()
-    {
-        $this->response['result'] = 'deprecated';
-        $this->response['message'] = 'Metodo deprecato. Usa il componente Livewire ict-child-form.';
-        return $this->response;
-    }
-
-    /**
-     * @deprecated Sostituito dal componente Livewire ict-modal-form
-     */
-    public function loadFormRole()
-    {
-        $this->response['result'] = 'deprecated';
-        $this->response['message'] = 'Metodo deprecato. Usa il componente Livewire ict-modal-form.';
-        return $this->response;
-    }
-
-    /**
      * saveFormRole
      * Salva il form dei form_items tramite saveModalForm() di IctController
      */
@@ -89,16 +64,6 @@ class AjaxController extends IctController
     }
 
     /**
-     * @deprecated Sostituito dal componente Livewire ict-modal-form
-     */
-    public function loadFormItemsForm()
-    {
-        $this->response['result'] = 'deprecated';
-        $this->response['message'] = 'Metodo deprecato. Usa il componente Livewire ict-modal-form.';
-        return $this->response;
-    }
-
-    /**
      * saveFormItemsForm
      * Salva il form dei form_items tramite saveModalForm() di IctController
      */
@@ -111,26 +76,6 @@ class AjaxController extends IctController
         } else {
             return $this->saveModalForm($Model, request('form_id'));
         }
-    }
-
-    /**
-     * @deprecated Sostituito dal componente Livewire ict-child-form
-     */
-    public function loadChildReportCols()
-    {
-        $this->response['result'] = 'deprecated';
-        $this->response['message'] = 'Metodo deprecato. Usa il componente Livewire ict-child-form.';
-        return $this->response;
-    }
-
-    /**
-     * @deprecated Sostituito dal componente Livewire ict-modal-form
-     */
-    public function loadReportColsForm()
-    {
-        $this->response['result'] = 'deprecated';
-        $this->response['message'] = 'Metodo deprecato. Usa il componente Livewire ict-modal-form.';
-        return $this->response;
     }
 
     /**

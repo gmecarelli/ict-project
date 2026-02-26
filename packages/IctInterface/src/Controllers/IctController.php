@@ -198,21 +198,6 @@ class IctController extends Controller {
     }
     
     /**
-     * updateSwitch
-     * Aggiorna lo stato di un switch
-     * @return void
-     */
-    public function updateSwitch() {
-        DB::table(request('table'))->where('id', request('id'))->update([request('field') => request('value')]);
-        $this->log->sql(DB::getQueryLog(),__FILE__,__LINE__);
-        return [
-            'result' => 'success',
-            'message' => request('value') == 1 ? '<span class="text-success">On</span>' : '<span class="text-danger">Off</span>',
-            'id' => request('id')
-        ];
-    }
-    
-    /**
      * dashboard
      * Visualizzazione della dashboard
      * @return void

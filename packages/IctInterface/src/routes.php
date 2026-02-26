@@ -42,44 +42,21 @@ Route::middleware(['web', 'islogged'])->group(function () {
     Route::resource('/form', 'Packages\IctInterface\Controllers\FormController');
     Route::resource('/formfield', 'Packages\IctInterface\Controllers\FormFieldController');
 
-    // Route legacy multiselect — sostituite da Livewire MulticheckManagerComponent
-    // Route::get('/multiselect', ['Packages\IctInterface\Controllers\Services\MulticheckController', 'multiselect'])->name('call.multiselect');
-    // Route::get('/do_multiselect', ['Packages\IctInterface\Controllers\Services\MulticheckController', 'doAction'])->name('call.do_multiselect');
-    // Route legacy switch — sostituita da Livewire BoolSwitchComponent (toggle-bool-switch)
-    // Route::put('/switch/update', ['Packages\IctInterface\Controllers\IctController', 'updateSwitch'])->name('switch.update');
-
     /**
      * SEARCH
      */
     Route::prefix('search')->group(function () {
-        Route::get('/attachments', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'searchAttachments'])->name('call.search.attach');
         Route::get('/users', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'searchUsers'])->name('call.search.users');
     });
     /**
      * MODAL
      */
     Route::prefix('modal')->group(function () {
-        Route::get('/loadcol', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'loadReportColsForm'])->name('call.load.reportcols');
         Route::post('/savecol', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'saveReportColsForm'])->name('call.save.reportcols');
-
-        Route::get('/loadformitem', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'loadFormItemsForm'])->name('call.load.formitems');
         Route::post('/saveformitem', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'saveFormItemsForm'])->name('call.save.formitems');
-
-        Route::get('/loadrole', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'loadFormRole'])->name('call.load.role');
         Route::post('/saverole', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'saveFormRole'])->name('call.save.role');
-
         Route::post('/addusers', ['Packages\IctInterface\Controllers\ProfileController', 'addUsers'])->name('call.add.users');
     });
-    /**
-     * CHILD
-     */
-    Route::prefix('child')->group(function () {
-        Route::any('/checkform', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'checkFormWithItem'])->name('call.check_form_items');
-        Route::any('/addformchild', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'loadChildFormField'])->name('call.child.addformchild');
-        Route::any('/addreportchild', ['Packages\IctInterface\Controllers\Ajax\AjaxController', 'loadChildReportCols'])->name('call.child.addreportchild');
-    });
-
-
     /**
      * EXPORT
      */

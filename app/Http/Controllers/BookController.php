@@ -8,7 +8,6 @@ use Kris\LaravelFormBuilder\FormBuilder;
 use Packages\IctInterface\Controllers\Ajax\AjaxController;
 use Packages\IctInterface\Controllers\IctController;
 use Packages\IctInterface\Traits\LivewireController;
-use Packages\IctInterface\Traits\StandardController;
 
 class BookController extends IctController
 {

@@ -18,8 +18,6 @@ use Packages\IctInterface\View\Components\BtnEdit;
 use Packages\IctInterface\View\Components\BtnCreate;
 use Packages\IctInterface\View\Components\BtnDelete;
 use Packages\IctInterface\View\Components\BtnExport;
-use Packages\IctInterface\View\Components\ChildForm;
-use Packages\IctInterface\View\Components\MultiCheckbox;
 use Packages\IctInterface\View\Components\TitleForm;
 use Packages\IctInterface\View\Components\TitlePage;
 use Packages\IctInterface\View\Components\NavSidebar;
@@ -68,12 +66,10 @@ class IctServiceProvider extends ServiceProvider
             BtnDelete::class,
             BtnEdit::class,
             BtnExport::class,
-            ChildForm::class,
             NavSidebar::class,
             Pagination::class,
             TitleForm::class,
             TitlePage::class,
-            MultiCheckbox::class,
             DynamicField::class,
         ]);
 

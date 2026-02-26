@@ -1,1 +1,0 @@
-<input type="checkbox" value="{{trim(strip_tags($id))}}" id="multicheck_{{trim(strip_tags($id))}}" class="multicheck" {{$checked}} />

@@ -127,14 +127,4 @@
 
 @endsection
 
-@section('footer')
-  @parent
-  @if(!isset($useLivewireForm) || !$useLivewireForm)
-    @if(isset($id_child) && $id_child)
-        @include('ict::layouts.modal-item')
-        @if(isset($itemChildFormData))
-                @include('ict::layouts.modal')
-        @endif
-    @endif
-  @endif
 @endsection
