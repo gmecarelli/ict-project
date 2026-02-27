@@ -10,7 +10,19 @@
               allIds: {!! json_encode(collect($data)->pluck('id')->map(fn($id) => trim(strip_tags((string) $id)))->values()->toArray()) !!},
               get allChecked() { return this.allIds.length > 0 && this.selectedIds.length === this.allIds.length },
               toggleAll() { this.allChecked ? this.selectedIds = [] : this.selectedIds = [...this.allIds] },
-              executeAction(index) { Livewire.dispatch('execute-multicheck-action', { actionIndex: index, selectedIds: this.selectedIds }) }
+              executeAction(index) { Livewire.dispatch('execute-multicheck-action', { actionIndex: index }) },
+              init() {
+                  this.$watch('selectedIds', (ids) => {
+                      fetch('/session_ids', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json',
+                              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                          },
+                          body: JSON.stringify({ ids: ids, report: {{ $report['id'] }} })
+                      });
+                  });
+              }
           }));
       });
   </script>

@@ -14,7 +14,10 @@
  *   @livewire('ict-multicheck-manager', ['reportId' => $report['id']])
  *
  * Dispatch da Alpine.js:
- *   Livewire.dispatch('execute-multicheck-action', { actionIndex: 0, selectedIds: [1,2,3] })
+ *   Livewire.dispatch('execute-multicheck-action', { actionIndex: 0 })
+ *
+ * Gli ID selezionati vengono letti da session('multicheck_ids'),
+ * sincronizzata da Alpine.js tramite fetch POST /session_ids.
  *
  * @author: Giorgio Mecarelli
  */
@@ -44,9 +47,10 @@ class MulticheckManagerComponent extends Component
      * Esegue un'azione bulk sugli ID selezionati.
      * Chiamato tramite Livewire.dispatch da Alpine.js.
      */
-    public function executeAction(int $actionIndex, array $selectedIds): void
+    public function executeAction(int $actionIndex): void
     {
         $log = new Logger();
+        $selectedIds = session('multicheck_ids', []);
 
         if (empty($selectedIds)) {
             session()->flash('message', 'Non ci sono righe selezionate');
@@ -66,6 +70,7 @@ class MulticheckManagerComponent extends Component
         $route = Arr::get($dropItem, 'route');
         if (!is_null($route)) {
             session()->forget('drop_items');
+            session()->forget('multicheck_ids');
             $this->redirect(route($route) . '?report=' . $this->reportId);
             return;
         }
@@ -105,6 +110,7 @@ class MulticheckManagerComponent extends Component
             $log->info("MULTICHECK bulk update: {$counter} record aggiornati su [{$table}]", __FILE__, __LINE__);
 
             session()->forget('drop_items');
+            session()->forget('multicheck_ids');
 
             session()->flash('message', "Aggiornate {$counter} record con successo");
             session()->flash('alert', 'success');

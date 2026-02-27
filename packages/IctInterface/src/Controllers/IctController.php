@@ -2,16 +2,12 @@
 
 namespace Packages\IctInterface\Controllers;
 
-use Illuminate\Support\Arr;
-use App\Models\Notification;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Schema;
-use Packages\IctInterface\Models\Form;
-use Packages\IctInterface\Models\Report;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Packages\IctInterface\Controllers\Services\Logger;
+use Packages\IctInterface\Models\Form;
 
 class IctController extends Controller {
 
@@ -196,6 +192,12 @@ class IctController extends Controller {
     public function replaceTags($str) {
         return str_replace(['[now]'],[date("d/m/Y")], $str);
     }
+
+    public function storeMultiCheckIds() {
+        $ids = request('ids', []);
+        session()->put('multicheck_ids', $ids);
+        return response()->json(['result' => 'success']);
+    }
     
     /**
      * dashboard
@@ -227,21 +229,8 @@ class IctController extends Controller {
             return view(is_null($dashboard['view']) ? 'ict::dashboard' : $dashboard['view'], $params);
         }
 
-        if(Schema::hasTable('notifications')) {
-            
-            $notifications = Notification::where('is_enabled', 1)
-                                        ->whereDate('created_at', '>=', Carbon::now()->subDays(2))
-                                        ->orderBy('id', 'desc')
-                                        ->get();
-            if($notifications->isEmpty()) {
-                $notifications = ['Accesso consentito, benvenuto! Non ci sono nuove notifiche'];
-            }
-        } else {
-            $notifications = ['Accesso consentito, benvenuto! Le notifiche sono disattivate'];
-        }
-
         return view('ict::dashboard', [
-            'notifications' => $notifications,
+            'notifications' => $notifications ?? null,
         ]);
     }
  
