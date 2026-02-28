@@ -14,6 +14,7 @@ use Packages\IctInterface\Livewire\DeleteConfirmComponent;
 use Packages\IctInterface\Livewire\UserProfileManagerComponent;
 use Packages\IctInterface\Livewire\MulticheckManagerComponent;
 use Packages\IctInterface\Livewire\BoolSwitchComponent;
+use Packages\IctInterface\Livewire\AttachmentModalComponent;
 use Packages\IctInterface\View\Components\BtnEdit;
 use Packages\IctInterface\View\Components\BtnCreate;
 use Packages\IctInterface\View\Components\BtnDelete;
@@ -52,6 +53,9 @@ class IctServiceProvider extends ServiceProvider
         $this->app->singleton(
             \Packages\IctInterface\Services\ActionHandlerResolver::class
         );
+        $this->app->singleton(
+            \Packages\IctInterface\Services\AttachmentService::class
+        );
     }
 
     /**
@@ -86,6 +90,7 @@ class IctServiceProvider extends ServiceProvider
         Livewire::component('ict-user-profile-manager', UserProfileManagerComponent::class);
         Livewire::component('ict-multicheck-manager', MulticheckManagerComponent::class);
         Livewire::component('ict-bool-switch', BoolSwitchComponent::class);
+        Livewire::component('ict-attachment-modal', AttachmentModalComponent::class);
 
         if ($this->app->runningInConsole()) {
             // Publish assets

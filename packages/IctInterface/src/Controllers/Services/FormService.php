@@ -134,6 +134,8 @@ class FormService extends ApplicationService
     /**
      * saveFileAttached
      * Esegue le fasi del salvataggio di un file allegato al form
+     *
+     * @deprecated Usa AttachmentService::store() o storeForImport() con EditableFormComponent.
      */
     public function saveFileAttached($model, $id, $prefix = null, $fieldNames = ['attach'])
     {
@@ -162,6 +164,8 @@ class FormService extends ApplicationService
     /**
      * saveMultiAttached
      * Esegue l'upload dei file di un form con nome del tipo array (attach[])
+     *
+     * @deprecated Usa AttachmentService::store() con AttachmentModalComponent.
      */
     public function saveMultiAttached($model, $id_record, $fileFields = [], $prefix = null, $fk_key = 'activity_id')
     {
@@ -212,6 +216,8 @@ class FormService extends ApplicationService
     /**
      * saveAttachArchive
      * Salva i file nella tabella di archivio files
+     *
+     * @deprecated Usa Attachment model con relazione polimorfica.
      */
     public function saveAttachArchive($id_ref, $tag, $fileName, $file = null)
     {
@@ -239,6 +245,8 @@ class FormService extends ApplicationService
     /**
      * uploadFileAttached
      * Esegue l'upload del file
+     *
+     * @deprecated Usa AttachmentService::store() o storeForImport().
      */
     public function uploadFileAttached($id, $prefix = null, $fieldName = 'attach')
     {
@@ -253,6 +261,8 @@ class FormService extends ApplicationService
     /**
      * upload
      * Esegue l'upload del file
+     *
+     * @deprecated Usa AttachmentService::store() o storeForImport().
      */
     public function upload($file, $fileName, $prefix)
     {
@@ -286,6 +296,8 @@ class FormService extends ApplicationService
     /**
      * saveFileName
      * UPDATE: aggiorna il valore del campo del file con il nome_file convenzionale
+     *
+     * @deprecated Usa AttachmentService per la gestione dei nomi file.
      */
     public function saveFileName($model, $id, $fieldsToSave = [])
     {
@@ -302,6 +314,8 @@ class FormService extends ApplicationService
     /**
      * _setFileName
      * Rinomina il file come da convenzione
+     *
+     * @deprecated Usa AttachmentService per la gestione dei nomi file.
      */
     private function _setFileName($id, $file, $prefix = null)
     {

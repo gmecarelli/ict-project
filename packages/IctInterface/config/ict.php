@@ -8,4 +8,7 @@ return [
     'css_color' => env('APP_CSS_COLOR', '#4d7496'),
     'table_users' => env('TABLE_USERS', 'users'),
     'action_handlers' => [],
+    'model_map' => [],
+    'file_handlers' => [],
+    'upload_max_size' => env('UPLOAD_MAX_SIZE', 10240),
 ];

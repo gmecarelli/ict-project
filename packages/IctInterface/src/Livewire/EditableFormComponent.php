@@ -15,9 +15,12 @@
 namespace Packages\IctInterface\Livewire;
 
 use Exception;
+use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use Packages\IctInterface\Models\Attachment;
+use Packages\IctInterface\Services\AttachmentService;
 use Packages\IctInterface\Services\DynamicFormService;
 
 class EditableFormComponent extends DynamicForm
@@ -112,13 +115,35 @@ class EditableFormComponent extends DynamicForm
             }
         }
 
-        // Gestione upload file
+        // Gestione upload file (Caso A: attachment, Caso B: import)
+        $attachmentService = app(AttachmentService::class);
+        $pendingAttachments = [];
+        $pendingImports = [];
+
         foreach ($this->fileUploads as $fieldName => $file) {
-            if ($file) {
-                $uploadDir = config('ict.upload_dir', 'upload');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->storeAs($uploadDir, $fileName, 'public');
-                $data[$fieldName] = $fileName;
+            if (!$file) continue;
+
+            $fieldConfig = collect($this->fields)->firstWhere('name', $fieldName);
+            $mode = $this->getFileMode($fieldConfig);
+
+            if ($mode === 'attachment') {
+                // Caso A: salva file ora, registra in attachments dopo (serve recordId)
+                $uploadResult = $attachmentService->storeForImport($file, $this->tableName);
+                $pendingAttachments[] = [
+                    'file'       => $uploadResult,
+                    'fieldName'  => $fieldName,
+                    'description' => $data['description'] ?? null,
+                ];
+                unset($data[$fieldName]);
+            } else {
+                // Caso B: salva file su filesystem, metti il path nella colonna
+                $uploadResult = $attachmentService->storeForImport($file, $this->tableName);
+                $data[$fieldName] = $uploadResult['server_name'];
+                $pendingImports[] = [
+                    'fullPath'    => "public/{$uploadResult['full_path']}",
+                    'fieldName'   => $fieldName,
+                    'fieldConfig' => $fieldConfig,
+                ];
             }
         }
 
@@ -173,6 +198,33 @@ class EditableFormComponent extends DynamicForm
 
             DB::commit();
 
+            // Registra allegati in tabella attachments (Caso A)
+            foreach ($pendingAttachments as $pa) {
+                Attachment::create([
+                    'file_name_server'   => $pa['file']['server_name'],
+                    'file_name_original' => $pa['file']['original_name'],
+                    'description'        => $pa['description'],
+                    'path'               => $pa['file']['path'],
+                    'ext'                => $pa['file']['ext'],
+                    'attachable_type'    => $this->getAttachableType(),
+                    'attachable_id'      => $this->recordId,
+                ]);
+            }
+
+            // Invoca FileFieldHandler per import (Caso B)
+            foreach ($pendingImports as $pi) {
+                $fileHandler = $attachmentService->resolveFileHandler($this->tableName, $pi['fieldName']);
+                if ($fileHandler) {
+                    $fileHandler->handle(
+                        $pi['fullPath'],
+                        $data,
+                        $this->recordId,
+                        $this->tableName,
+                        $pi['fieldName']
+                    );
+                }
+            }
+
             // --- AFTER HOOKS ---
             if ($handler) {
                 if ($wasInsert) {
@@ -197,6 +249,29 @@ class EditableFormComponent extends DynamicForm
             ?? $this->pageUrl . '?report=' . $this->reportId;
 
         $this->redirect($redirectUrl);
+    }
+
+    /**
+     * Determina la modalità file dal type_attr del campo: 'attachment' (Caso A) o 'import' (Caso B)
+     */
+    private function getFileMode(?array $fieldConfig): string
+    {
+        if (!$fieldConfig) return 'attachment';
+        $attrs = $fieldConfig['type_attr'] ?? '';
+        $parsed = _parser($attrs);
+        return $parsed['mode'] ?? 'attachment';
+    }
+
+    /**
+     * Risolve il fully-qualified class name del model dalla tableName
+     */
+    private function getAttachableType(): string
+    {
+        $map = config('ict.model_map', []);
+        if (isset($map[$this->tableName])) {
+            return $map[$this->tableName];
+        }
+        return 'App\\Models\\' . Str::studly(Str::singular($this->tableName));
     }
 
     public function render()

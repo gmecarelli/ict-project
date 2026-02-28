@@ -8,6 +8,10 @@ use Packages\IctInterface\Models\AttachmentArchive;
 use Packages\IctInterface\Controllers\IctController;
 use Packages\IctInterface\Controllers\Services\Logger;
 
+/**
+ * @deprecated Usa AttachmentModalComponent (Livewire) e AttachmentService per la gestione allegati.
+ * Questo controller legacy è mantenuto solo per compatibilità con codice esistente.
+ */
 class AttachmentController extends IctController
 {
     public $response;
