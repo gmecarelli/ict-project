@@ -7,4 +7,5 @@ return [
     'app_url' => env('APP_URL', 'http://localhost:8040'),
     'css_color' => env('APP_CSS_COLOR', '#4d7496'),
     'table_users' => env('TABLE_USERS', 'users'),
+    'action_handlers' => [],
 ];

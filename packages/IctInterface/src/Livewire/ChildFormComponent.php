@@ -225,6 +225,10 @@ class ChildFormComponent extends Component
             $this->validate($rules);
         }
 
+        // --- ACTION HANDLER ---
+        $resolver = app(\Packages\IctInterface\Services\ActionHandlerResolver::class);
+        $handler = $resolver->resolve($this->childTableName);
+
         DB::beginTransaction();
 
         try {
@@ -244,7 +248,25 @@ class ChildFormComponent extends Component
                         unset($item[$field['name']]);
                     }
                 }
-                DB::table($this->childTableName)->insert($item);
+
+                // Before hook
+                if ($handler) {
+                    $item = $handler->beforeStore($this->childTableName, $item, $this->childFormId);
+                    if ($item === null) {
+                        continue; // skip questo item
+                    }
+                }
+
+                // Store action
+                $newId = $handler ? $handler->store($this->childTableName, $item, $this->childFormId) : null;
+                if ($newId === null) {
+                    $newId = DB::table($this->childTableName)->insertGetId($item);
+                }
+
+                // After hook
+                if ($handler) {
+                    $handler->afterStore($this->childTableName, $item, $newId, $this->childFormId);
+                }
             }
             DB::commit();
 

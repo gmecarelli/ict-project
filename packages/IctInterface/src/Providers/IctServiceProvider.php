@@ -49,6 +49,9 @@ class IctServiceProvider extends ServiceProvider
         $this->app->singleton(
             \Packages\IctInterface\Services\DynamicFormService::class
         );
+        $this->app->singleton(
+            \Packages\IctInterface\Services\ActionHandlerResolver::class
+        );
     }
 
     /**

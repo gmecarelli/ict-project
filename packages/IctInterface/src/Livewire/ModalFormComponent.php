@@ -186,20 +186,49 @@ class ModalFormComponent extends Component
             }
         }
 
+        // --- ACTION HANDLER ---
+        $resolver = app(\Packages\IctInterface\Services\ActionHandlerResolver::class);
+        $handler = $resolver->resolve($this->tableName);
+
+        $wasInsert = !$this->recordId;
+
+        if ($handler) {
+            if ($this->recordId) {
+                $data = $handler->beforeUpdate($this->tableName, $data, $this->formId, $this->recordId);
+            } else {
+                $data = $handler->beforeStore($this->tableName, $data, $this->formId);
+            }
+            if ($data === null) {
+                session()->flash('modal_error', 'Operazione annullata dal handler');
+                return;
+            }
+        }
+
         DB::beginTransaction();
 
         try {
             if ($this->recordId) {
-                // UPDATE
-                DB::table($this->tableName)
-                    ->where('id', $this->recordId)
-                    ->update($data);
+                $handled = $handler ? $handler->update($this->tableName, $data, $this->formId, $this->recordId) : null;
+                if ($handled === null) {
+                    DB::table($this->tableName)->where('id', $this->recordId)->update($data);
+                }
             } else {
-                // INSERT
-                $this->recordId = DB::table($this->tableName)->insertGetId($data);
+                $newId = $handler ? $handler->store($this->tableName, $data, $this->formId) : null;
+                if ($newId === null) {
+                    $newId = DB::table($this->tableName)->insertGetId($data);
+                }
+                $this->recordId = $newId;
             }
 
             DB::commit();
+
+            if ($handler) {
+                if ($wasInsert) {
+                    $handler->afterStore($this->tableName, $data, $this->recordId, $this->formId);
+                } else {
+                    $handler->afterUpdate($this->tableName, $data, $this->recordId, $this->formId);
+                }
+            }
 
             $this->closeModal();
             $this->dispatch('record-saved');

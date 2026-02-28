@@ -64,28 +64,50 @@ class DeleteConfirmComponent extends Component
 
         $log = new Logger();
 
+        // --- ACTION HANDLER ---
+        $resolver = app(\Packages\IctInterface\Services\ActionHandlerResolver::class);
+        $handler = $resolver->resolve($this->routePrefix);
+
+        if ($handler) {
+            $allowed = $handler->beforeDelete($this->routePrefix, $this->recordId, $this->action);
+            if (!$allowed) {
+                session()->flash('message', 'Operazione annullata dal handler');
+                session()->flash('alert', 'warning');
+                $this->cancel();
+                $this->js('window.location.reload()');
+                return;
+            }
+        }
+
         try {
             DB::beginTransaction();
 
-            if ($this->action === 'delete') {
-                DB::table($this->routePrefix)
-                    ->where('id', $this->recordId)
-                    ->delete();
+            $handled = $handler ? $handler->delete($this->routePrefix, $this->recordId, $this->action) : null;
 
-                $log->info("*DELETE* ID [{$this->recordId}] da [{$this->routePrefix}]", __FILE__, __LINE__);
-                session()->flash('message', "Record [ID: {$this->recordId}] eliminato con successo");
-                session()->flash('alert', 'success');
-            } elseif ($this->action === 'disable') {
-                DB::table($this->routePrefix)
-                    ->where('id', $this->recordId)
-                    ->update(['is_enabled' => 0]);
-
-                $log->info("*DISABLE* ID [{$this->recordId}] da [{$this->routePrefix}]", __FILE__, __LINE__);
-                session()->flash('message', "Record [ID: {$this->recordId}] disabilitato con successo");
+            if ($handled === null) {
+                // Default behavior
+                if ($this->action === 'delete') {
+                    DB::table($this->routePrefix)->where('id', $this->recordId)->delete();
+                    $log->info("*DELETE* ID [{$this->recordId}] da [{$this->routePrefix}]", __FILE__, __LINE__);
+                    session()->flash('message', "Record [ID: {$this->recordId}] eliminato con successo");
+                    session()->flash('alert', 'success');
+                } elseif ($this->action === 'disable') {
+                    DB::table($this->routePrefix)->where('id', $this->recordId)->update(['is_enabled' => 0]);
+                    $log->info("*DISABLE* ID [{$this->recordId}] da [{$this->routePrefix}]", __FILE__, __LINE__);
+                    session()->flash('message', "Record [ID: {$this->recordId}] disabilitato con successo");
+                    session()->flash('alert', 'success');
+                }
+            } else {
+                $actionLabel = $this->action === 'delete' ? 'eliminato' : 'disabilitato';
+                session()->flash('message', "Record [ID: {$this->recordId}] {$actionLabel} con successo");
                 session()->flash('alert', 'success');
             }
 
             DB::commit();
+
+            if ($handler) {
+                $handler->afterDelete($this->routePrefix, $this->recordId, $this->action);
+            }
         } catch (Exception $e) {
             DB::rollBack();
             session()->flash('message', 'Errore: ' . $e->getMessage());

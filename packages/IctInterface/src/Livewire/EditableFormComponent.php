@@ -129,29 +129,58 @@ class EditableFormComponent extends DynamicForm
             }
         }
 
+        // --- ACTION HANDLER ---
+        $resolver = app(\Packages\IctInterface\Services\ActionHandlerResolver::class);
+        $handler = $resolver->resolve($this->tableName);
+
         $wasInsert = !$this->recordId;
+
+        // --- BEFORE HOOKS ---
+        if ($handler) {
+            if ($this->recordId) {
+                $data = $handler->beforeUpdate($this->tableName, $data, $this->formId, $this->recordId);
+            } else {
+                $data = $handler->beforeStore($this->tableName, $data, $this->formId);
+            }
+            if ($data === null) {
+                session()->flash('message', 'Operazione annullata dal handler');
+                session()->flash('alert', 'warning');
+                return;
+            }
+        }
 
         DB::beginTransaction();
 
         try {
             if ($this->recordId) {
-                // UPDATE
-                DB::table($this->tableName)
-                    ->where('id', $this->recordId)
-                    ->update($data);
-
+                // --- UPDATE ---
+                $handled = $handler ? $handler->update($this->tableName, $data, $this->formId, $this->recordId) : null;
+                if ($handled === null) {
+                    DB::table($this->tableName)->where('id', $this->recordId)->update($data);
+                }
                 session()->flash('message', 'Record aggiornato con successo');
                 session()->flash('alert', 'success');
             } else {
-                // INSERT
-                $id = DB::table($this->tableName)->insertGetId($data);
-                $this->recordId = $id;
-
-                session()->flash('message', "Record [ID: {$id}] creato con successo");
+                // --- INSERT ---
+                $newId = $handler ? $handler->store($this->tableName, $data, $this->formId) : null;
+                if ($newId === null) {
+                    $newId = DB::table($this->tableName)->insertGetId($data);
+                }
+                $this->recordId = $newId;
+                session()->flash('message', "Record [ID: {$newId}] creato con successo");
                 session()->flash('alert', 'success');
             }
 
             DB::commit();
+
+            // --- AFTER HOOKS ---
+            if ($handler) {
+                if ($wasInsert) {
+                    $handler->afterStore($this->tableName, $data, $this->recordId, $this->formId);
+                } else {
+                    $handler->afterUpdate($this->tableName, $data, $this->recordId, $this->formId);
+                }
+            }
         } catch (Exception $e) {
             DB::rollBack();
             session()->flash('message', 'Errore nel salvataggio: ' . $e->getMessage());
