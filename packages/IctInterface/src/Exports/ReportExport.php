@@ -2,12 +2,10 @@
 
 namespace Packages\IctInterface\Exports;
 
-use App\Models\Supplier;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromQuery;
-use Gmecarelli\ictInterface\Models\Report;
-use App\Http\Controllers\Classes\MapExport;
+use Packages\IctInterface\Exports\MapExport;
 use Packages\IctInterface\Controllers\IctController;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -25,6 +23,8 @@ class ReportExport implements FromQuery, WithHeadings, ShouldAutoSize, WithColum
     public $skip;
     public $format;
     public $types;
+    public $colTypes;
+    protected $mapExport;
 
     /**
      * __construct
@@ -44,6 +44,7 @@ class ReportExport implements FromQuery, WithHeadings, ShouldAutoSize, WithColum
         $this->skip = $skip;
         $this->format = $format;
         $this->types = [];
+        $this->colTypes = [];
     }
     /**
      * @return \Illuminate\Support\Collection
@@ -54,6 +55,7 @@ class ReportExport implements FromQuery, WithHeadings, ShouldAutoSize, WithColum
         $obj = DB::table($this->model->getTable())
             ->select($this->fields)
             ->orderBy('id', 'desc');
+
         foreach ($this->where as $func => $arr) {
             if (count($arr) == 0) {
                 continue;
@@ -143,6 +145,7 @@ class ReportExport implements FromQuery, WithHeadings, ShouldAutoSize, WithColum
  
             $this->fields[] = $col->field;
             $this->types[] = $col->type;
+            $this->colTypes = Arr::add($this->colTypes, $col->field, $col->type);
         
             $cols[]=strtoupper($col->label);
         }
@@ -150,18 +153,26 @@ class ReportExport implements FromQuery, WithHeadings, ShouldAutoSize, WithColum
         return $cols;
     }
     /**
+     * resolveMapExport
+     * Restituisce l'istanza di MapExport da usare per la mappatura.
+     * Override questo metodo nell'app per personalizzazioni.
+     */
+    protected function resolveMapExport(): MapExport
+    {
+        return new MapExport();
+    }
+
+    /**
      * map
-     * 
-     * Funzione di mappatura per gli exports in Excel
      * Effettua la sostituzione dei valori delle colonne di lookup
      * con i nomi corrispondenti
-     * @param array|stdClass $row Riga corrente da mappare
-     * @return array Riga mappata
      */
     public function map($row): array
     {
-        $map = new MapExport();
-        return $map->getMappedRow($row);
+        if (!$this->mapExport) {
+            $this->mapExport = $this->resolveMapExport();
+        }
+        return $this->mapExport->getMappedRow($row);
     }
 
 }

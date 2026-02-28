@@ -2,24 +2,39 @@
 
 namespace Packages\IctInterface\Controllers;
 
-use Illuminate\Support\Arr;
-use Packages\IctInterface\Exports\ReportExport;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use Packages\IctInterface\Models\Form;
-use Packages\IctInterface\Models\Report;
-use Packages\IctInterface\Models\FormField;
-use Packages\IctInterface\Models\ReportColumn;
 use Packages\IctInterface\Controllers\IctController;
-use Packages\IctInterface\Controllers\Services\ReportService;
+use Packages\IctInterface\Exports\FilterExportController;
+use Packages\IctInterface\Exports\ReportExport;
+use Packages\IctInterface\Models\Form;
+use Packages\IctInterface\Models\FormField;
+use Packages\IctInterface\Models\Option;
 use Packages\IctInterface\Models\ProfileRole;
+use Packages\IctInterface\Models\Report;
+use Packages\IctInterface\Models\ReportColumn;
 
 class ExcelController extends IctController
 {
-    public $report;
+    protected $skip = [];
 
     public function __construct()
     {
-        $this->report = new ReportService();
+        parent::__construct();
+    }
+
+    /**
+     * exportExcel
+     * Export generico per qualsiasi lista/report applicativo
+     */
+    public function exportExcel()
+    {
+        $where = $this->_getWhereArrayForDataExport();
+        $resource = Report::find(request('report'))->route;
+        $modelClass = 'App\\Models\\' . Str::studly(Str::singular($resource));
+        $model = new $modelClass();
+        $fileName = $this->_getFileName($resource, request('ext'));
+        return Excel::download(new ReportExport($model, $where, $this->skip), $fileName);
     }
 
     /**
@@ -31,7 +46,7 @@ class ExcelController extends IctController
         $where = $this->_getWhereArrayForDataExport();
         $model = new Report();
         $fileName = $this->_getFileName('exportReport', request('ext'));
-        return Excel::download(new ReportExport($model, $where), $fileName);
+        return Excel::download(new ReportExport($model, $where, $this->skip), $fileName);
     }
 
     /**
@@ -43,7 +58,7 @@ class ExcelController extends IctController
         $where = $this->_getWhereArrayForDataExport();
         $model = new ReportColumn();
         $fileName = $this->_getFileName('exportReportCols', request('ext'));
-        return Excel::download(new ReportExport($model, $where), $fileName);
+        return Excel::download(new ReportExport($model, $where, $this->skip), $fileName);
     }
 
     /**
@@ -55,38 +70,50 @@ class ExcelController extends IctController
         $where = $this->_getWhereArrayForDataExport();
         $model = new Form();
         $fileName = $this->_getFileName('exportForm', request('ext'));
-        return Excel::download(new ReportExport($model, $where), $fileName);
+        return Excel::download(new ReportExport($model, $where, $this->skip), $fileName);
     }
 
     /**
      * exportFormFields
-     * Esporta su excel/csv i dati visualizzati nel report di Configura DRS Items
+     * Esporta su excel/csv i dati visualizzati nel report di Configura Form Fields
      */
     public function exportFormFields()
     {
         $where = $this->_getWhereArrayForDataExport();
         $model = new FormField();
         $fileName = $this->_getFileName('exportFormFields', request('ext'));
-        return Excel::download(new ReportExport($model, $where), $fileName);
+        return Excel::download(new ReportExport($model, $where, $this->skip), $fileName);
     }
 
     /**
      * exportProfileRoles
-     * Esporta su excel/csv i dati visualizzati nel report di Configura DRS Items
+     * Esporta su excel/csv i dati visualizzati nel report di Profili e Ruoli
      */
     public function exportProfileRoles()
     {
         $where = $this->_getWhereArrayForDataExport();
         $model = new ProfileRole();
         $fileName = $this->_getFileName('exportProfileRoles', request('ext'));
-        return Excel::download(new ReportExport($model, $where), $fileName);
+        return Excel::download(new ReportExport($model, $where, $this->skip), $fileName);
+    }
+
+    /**
+     * exportOptions
+     * Esporta su excel/csv i dati visualizzati nel report di Opzioni
+     */
+    public function exportOptions()
+    {
+        $where = $this->_getWhereArrayForDataExport();
+        $model = new Option();
+        $fileName = $this->_getFileName('exportOptions', request('ext'));
+        return Excel::download(new ReportExport($model, $where, $this->skip), $fileName);
     }
 
     /**
      * _getFileName
      * Imposta il nome del file di esportazione
      */
-    private function _getFileName($prefix, $ext)
+    protected function _getFileName($prefix, $ext)
     {
         return $prefix . '_' . date('Ymd') . '.' . $ext;
     }
@@ -94,20 +121,11 @@ class ExcelController extends IctController
     /**
      * _getWhereArrayForDataExport
      * Restituisce l'array con le clausole where dell'ultima ricerca fatta
+     * Usa FilterExportController per gestire tutti i tipi di where
      */
-    private function _getWhereArrayForDataExport()
+    protected function _getWhereArrayForDataExport()
     {
-        $where = [];
-        $req = request()->all();
-        Arr::forget($req, ['report', 'filter', 'ext', 'form_id']);
-
-        foreach ($req as $field => $value) {
-            if (is_numeric($value)) {
-                $where[] = [$field, '=', $value];
-            } else {
-                $where[] = [$field, 'like', '%' . $value . '%'];
-            }
-        }
-        return $where;
+        $filter = new FilterExportController();
+        return $filter->prepareWhere();
     }
 }
