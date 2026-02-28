@@ -2,19 +2,16 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('report_id')->unsigned();
+            $table->unsignedBigInteger('report_id');
             $table->string('name', 50)->nullable()->comment('Nome e id del form che corrisponde al prefisso della route. Quindi fondamentale per il funzionamento del link');
             $table->string('title', 45)->nullable();
             $table->string('table', 50)->nullable()->comment('tabella di default dove vanno salvati i dati');
@@ -30,12 +27,13 @@ return new class extends Migration
             $table->string('language_name')->nullable();
             $table->string('template')->nullable();
             $table->string('data')->nullable();
-            $table->boolean('is_enabled')->default(true);
-            $table->foreignId('id_child')->nullable();
-            $table->timestamps();
+            $table->tinyInteger('is_enabled')->default(1);
+            $table->unsignedBigInteger('id_child')->nullable();
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
         });
 
-        // Inserimento dei dati iniziali
+        // Seed data
         DB::table('forms')->insert([
             [
                 'id' => 1,
@@ -58,7 +56,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-06-10 17:06:05',
-                'updated_at' => '2021-07-16 12:10:32'
+                'updated_at' => '2021-07-16 12:10:32',
             ],
             [
                 'id' => 2,
@@ -81,7 +79,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => 4,
                 'created_at' => '2021-06-10 17:06:05',
-                'updated_at' => '2023-08-10 13:15:08'
+                'updated_at' => '2023-08-10 13:15:08',
             ],
             [
                 'id' => 3,
@@ -104,7 +102,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-06-10 17:06:05',
-                'updated_at' => '2021-07-14 08:27:30'
+                'updated_at' => '2021-07-14 08:27:30',
             ],
             [
                 'id' => 4,
@@ -127,7 +125,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-06-10 17:06:05',
-                'updated_at' => '2021-07-13 12:33:08'
+                'updated_at' => '2021-07-13 12:33:08',
             ],
             [
                 'id' => 5,
@@ -150,7 +148,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-06-10 17:06:05',
-                'updated_at' => '2021-07-14 08:27:41'
+                'updated_at' => '2021-07-14 08:27:41',
             ],
             [
                 'id' => 6,
@@ -173,7 +171,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-06-10 17:06:05',
-                'updated_at' => '2023-09-04 13:14:51'
+                'updated_at' => '2023-09-04 13:14:51',
             ],
             [
                 'id' => 7,
@@ -196,7 +194,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => 8,
                 'created_at' => '2021-07-12 13:06:05',
-                'updated_at' => '2021-12-20 11:41:53'
+                'updated_at' => '2021-12-20 11:41:53',
             ],
             [
                 'id' => 8,
@@ -219,7 +217,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-07-12 13:06:05',
-                'updated_at' => '2021-07-26 11:52:41'
+                'updated_at' => '2021-07-26 11:52:41',
             ],
             [
                 'id' => 9,
@@ -242,7 +240,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-07-13 12:21:10',
-                'updated_at' => '2024-10-21 12:54:19'
+                'updated_at' => '2024-10-21 12:54:19',
             ],
             [
                 'id' => 10,
@@ -265,7 +263,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2021-07-18 14:32:31',
-                'updated_at' => '2021-07-26 11:52:35'
+                'updated_at' => '2021-07-26 11:52:35',
             ],
             [
                 'id' => 11,
@@ -288,7 +286,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => 12,
                 'created_at' => '2022-02-26 14:33:12',
-                'updated_at' => '2022-02-26 17:56:17'
+                'updated_at' => '2022-02-26 17:56:17',
             ],
             [
                 'id' => 12,
@@ -311,7 +309,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2022-02-26 15:39:43',
-                'updated_at' => '2024-06-11 10:00:28'
+                'updated_at' => '2024-06-11 10:00:28',
             ],
             [
                 'id' => 13,
@@ -334,7 +332,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2022-02-26 15:39:43',
-                'updated_at' => '2022-02-26 15:39:43'
+                'updated_at' => '2022-02-26 15:39:43',
             ],
             [
                 'id' => 14,
@@ -357,7 +355,7 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2022-02-26 15:39:43',
-                'updated_at' => '2022-02-26 15:39:43'
+                'updated_at' => '2022-02-26 15:39:43',
             ],
             [
                 'id' => 15,
@@ -380,14 +378,58 @@ return new class extends Migration
                 'is_enabled' => 1,
                 'id_child' => null,
                 'created_at' => '2022-02-26 15:39:43',
-                'updated_at' => '2022-02-26 15:39:43'
-            ]
+                'updated_at' => '2022-02-26 15:39:43',
+            ],
+            [
+                'id' => 16,
+                'report_id' => 10,
+                'name' => 'authors',
+                'title' => 'Form autori',
+                'table' => 'authors',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => 0,
+                'url_load' => null,
+                'url_save' => null,
+                'class' => 'col-md-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => 17,
+                'created_at' => '2026-02-18 11:33:36',
+                'updated_at' => '2026-02-18 11:55:10',
+            ],
+            [
+                'id' => 17,
+                'report_id' => 9,
+                'name' => 'books',
+                'title' => 'Form libri',
+                'table' => 'books',
+                'clean_at' => 4,
+                'id_modal' => null,
+                'modal_width' => '50%',
+                'method' => 'POST',
+                'type' => 'editable',
+                'dynamic_attach' => 0,
+                'url_load' => 'load.books',
+                'url_save' => 'save.books',
+                'class' => 'col-sm-12',
+                'language_name' => null,
+                'template' => null,
+                'data' => 'view:ict::forms.builder',
+                'is_enabled' => 1,
+                'id_child' => null,
+                'created_at' => '2026-02-18 12:58:18',
+                'updated_at' => '2026-02-18 14:51:30',
+            ],
         ]);
+
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('forms');

@@ -2,36 +2,32 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
         Schema::create('report_columns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('report_id')->unsigned();
+            $table->unsignedBigInteger('report_id');
             $table->string('label', 150)->nullable();
             $table->string('field', 150);
-            $table->string('type', 150)->default('string')->index();
+            $table->string('type', 150)->default('string');
             $table->string('type_params')->nullable()->comment('Parametri assegnati in base al type (definito nella classe). Es: per type=select il valore sarà [nome_tabella],[label],[id]');
             $table->integer('position')->default(10);
             $table->integer('is_enabled')->default(1);
             $table->integer('is_crypted')->default(0);
-            $table->timestamps();
-
-            $table->unique(['field', 'report_id', 'label']);
-            $table->index('field');
-            $table->foreign('report_id')->references('id')->on('reports')->onDelete('no action')->onUpdate('no action');
+            $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
+            $table->index('field', 'report_columns_field_index');
+            $table->unique(['field', 'report_id', 'label'], 'report_columns_field_report_id_label_unique');
+            $table->index('type', 'report_columns_type_index');
+            $table->foreign('report_id')->references('id')->on('reports');
         });
 
-        // Insert initial data
+        // Seed data
         DB::table('report_columns')->insert([
             [
                 'id' => 1,
@@ -42,8 +38,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 2,
@@ -54,8 +51,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 3,
@@ -66,8 +64,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 4,
@@ -78,8 +77,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 20,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2023-08-31 09:45:34'
+                'updated_at' => '2023-08-31 09:45:34',
             ],
             [
                 'id' => 5,
@@ -90,8 +90,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 25,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2023-08-31 09:45:42'
+                'updated_at' => '2023-08-31 09:45:42',
             ],
             [
                 'id' => 6,
@@ -102,8 +103,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 15,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2023-08-31 09:45:13',
-                'updated_at' => '2023-08-31 09:45:13'
+                'updated_at' => '2023-08-31 09:45:13',
             ],
             [
                 'id' => 7,
@@ -114,8 +116,9 @@ return new class extends Migration
                 'type_params' => 'route:reportcol,filter:report_id,title:Vedi le colonne del report',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2023-08-31 09:45:13',
-                'updated_at' => '2023-08-31 09:45:13'
+                'updated_at' => '2023-08-31 09:45:13',
             ],
             [
                 'id' => 8,
@@ -126,8 +129,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 9,
@@ -138,8 +142,9 @@ return new class extends Migration
                 'type_params' => 'table:menus,code:id,label:title',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-07-12 11:05:50'
+                'updated_at' => '2021-07-12 11:05:50',
             ],
             [
                 'id' => 10,
@@ -150,8 +155,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 11,
@@ -162,8 +168,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 12,
@@ -174,8 +181,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 13,
@@ -186,8 +194,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 14,
@@ -198,8 +207,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 15,
@@ -210,8 +220,9 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 16,
@@ -222,32 +233,35 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 17,
                 'report_id' => 2,
                 'label' => 'Visualizzabile nel menu',
                 'field' => 'is_show_menu',
-                'type' => 'enum',
-                'type_params' => 'reference:YN',
+                'type' => 'switch',
+                'type_params' => 'table:reports',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 18,
                 'report_id' => 2,
                 'label' => 'Abilitato',
                 'field' => 'is_enabled',
-                'type' => 'enum',
-                'type_params' => 'reference:ED',
+                'type' => 'switch',
+                'type_params' => 'table:reports',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 19,
@@ -258,8 +272,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
             [
                 'id' => 20,
@@ -270,9 +285,13 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-22 12:05:24',
-                'updated_at' => '2021-06-22 12:05:24'
+                'updated_at' => '2021-06-22 12:05:24',
             ],
+        ]);
+
+        DB::table('report_columns')->insert([
             [
                 'id' => 21,
                 'report_id' => 3,
@@ -282,8 +301,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:14:00',
-                'updated_at' => '2021-06-26 13:14:00'
+                'updated_at' => '2021-06-26 13:14:00',
             ],
             [
                 'id' => 22,
@@ -294,8 +314,9 @@ return new class extends Migration
                 'type_params' => 'table:reports,code:id,label:title',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:14:00',
-                'updated_at' => '2021-06-26 13:14:00'
+                'updated_at' => '2021-06-26 13:14:00',
             ],
             [
                 'id' => 23,
@@ -306,8 +327,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:16:17',
-                'updated_at' => '2021-06-26 13:16:17'
+                'updated_at' => '2021-06-26 13:16:17',
             ],
             [
                 'id' => 24,
@@ -318,8 +340,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 25,
@@ -330,8 +353,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 26,
@@ -342,8 +366,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 27,
@@ -354,8 +379,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 28,
@@ -366,8 +392,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 29,
@@ -378,8 +405,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 30,
@@ -390,8 +418,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 1,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 31,
@@ -402,8 +431,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 32,
@@ -414,8 +444,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 33,
@@ -426,8 +457,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 34,
@@ -438,8 +470,9 @@ return new class extends Migration
                 'type_params' => 'reference:TYPEFORM',
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 35,
@@ -450,8 +483,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 36,
@@ -462,8 +496,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 37,
@@ -474,8 +509,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 38,
@@ -486,8 +522,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 39,
@@ -498,8 +535,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 1,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-06-26 13:18:26',
-                'updated_at' => '2021-06-26 13:18:26'
+                'updated_at' => '2021-06-26 13:18:26',
             ],
             [
                 'id' => 40,
@@ -507,12 +545,16 @@ return new class extends Migration
                 'label' => 'Form',
                 'field' => 'form_id',
                 'type' => 'enum',
-                'type_params' => "table:forms,code:id,label:title",
+                'type_params' => 'table:forms,code:id,label:title',
                 'position' => 5,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
+        ]);
+
+        DB::table('report_columns')->insert([
             [
                 'id' => 41,
                 'report_id' => 5,
@@ -522,8 +564,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 42,
@@ -534,8 +577,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 15,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 43,
@@ -546,8 +590,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 20,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 44,
@@ -558,8 +603,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 25,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 45,
@@ -570,8 +616,9 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 30,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 46,
@@ -582,8 +629,9 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 35,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 47,
@@ -594,8 +642,9 @@ return new class extends Migration
                 'type_params' => 'reference:ED',
                 'position' => 40,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 48,
@@ -606,8 +655,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 45,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 49,
@@ -618,8 +668,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 50,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 50,
@@ -630,8 +681,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 55,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 51,
@@ -642,8 +694,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 1,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 52,
@@ -654,8 +707,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 65,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 53,
@@ -666,8 +720,9 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 70,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 54,
@@ -678,8 +733,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 75,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 55,
@@ -690,8 +746,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 80,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 56,
@@ -702,8 +759,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 1,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 57,
@@ -714,8 +772,9 @@ return new class extends Migration
                 'type_params' => 'table:profiles,code:id,label:name',
                 'position' => 90,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 58,
@@ -726,8 +785,9 @@ return new class extends Migration
                 'type_params' => 'table:reports,code:id,label:title',
                 'position' => 95,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 59,
@@ -738,8 +798,9 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 100,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 60,
@@ -750,9 +811,13 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 105,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
+        ]);
+
+        DB::table('report_columns')->insert([
             [
                 'id' => 61,
                 'report_id' => 7,
@@ -762,8 +827,9 @@ return new class extends Migration
                 'type_params' => 'reference:YN',
                 'position' => 110,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 62,
@@ -774,8 +840,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 115,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 63,
@@ -786,8 +853,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 120,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 64,
@@ -798,8 +866,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 1,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 65,
@@ -810,8 +879,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 5,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 66,
@@ -822,8 +892,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 10,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 67,
@@ -834,8 +905,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 15,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 68,
@@ -846,8 +918,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 20,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 69,
@@ -858,8 +931,9 @@ return new class extends Migration
                 'type_params' => null,
                 'position' => 25,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
+                'updated_at' => '2021-07-12 11:24:51',
             ],
             [
                 'id' => 70,
@@ -870,15 +944,144 @@ return new class extends Migration
                 'type_params' => 'reference:ED',
                 'position' => 30,
                 'is_enabled' => 1,
+                'is_crypted' => 0,
                 'created_at' => '2021-07-12 11:24:51',
-                'updated_at' => '2021-07-12 11:24:51'
-            ]
+                'updated_at' => '2021-07-12 11:24:51',
+            ],
+            [
+                'id' => 71,
+                'report_id' => 9,
+                'label' => 'ID',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 1,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:20:45',
+                'updated_at' => '2026-02-18 11:20:45',
+            ],
+            [
+                'id' => 72,
+                'report_id' => 9,
+                'label' => 'Titolo',
+                'field' => 'title',
+                'type' => 'crypted',
+                'type_params' => null,
+                'position' => 5,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:20:45',
+                'updated_at' => '2026-02-18 11:20:45',
+            ],
+            [
+                'id' => 73,
+                'report_id' => 9,
+                'label' => 'Autore',
+                'field' => 'author_id',
+                'type' => 'enum',
+                'type_params' => 'table:authors,code:id,label:name_surname',
+                'position' => 10,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:20:45',
+                'updated_at' => '2026-02-18 11:20:45',
+            ],
+            [
+                'id' => 74,
+                'report_id' => 9,
+                'label' => 'ISBN',
+                'field' => 'isbn',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 15,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:20:45',
+                'updated_at' => '2026-02-18 11:20:45',
+            ],
+            [
+                'id' => 75,
+                'report_id' => 9,
+                'label' => 'Editore',
+                'field' => 'publisher',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 20,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:20:45',
+                'updated_at' => '2026-02-18 11:20:45',
+            ],
+            [
+                'id' => 76,
+                'report_id' => 9,
+                'label' => 'Pubblicato il',
+                'field' => 'published_at',
+                'type' => 'date',
+                'type_params' => null,
+                'position' => 25,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:20:45',
+                'updated_at' => '2026-02-18 11:20:45',
+            ],
+            [
+                'id' => 77,
+                'report_id' => 10,
+                'label' => 'ID',
+                'field' => 'id',
+                'type' => 'int',
+                'type_params' => null,
+                'position' => 1,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:22:57',
+                'updated_at' => '2026-02-18 11:22:57',
+            ],
+            [
+                'id' => 78,
+                'report_id' => 10,
+                'label' => 'Nome',
+                'field' => 'name_surname',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 5,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:22:57',
+                'updated_at' => '2026-02-18 11:22:57',
+            ],
+            [
+                'id' => 79,
+                'report_id' => 10,
+                'label' => 'Email',
+                'field' => 'email',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 10,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:22:57',
+                'updated_at' => '2026-02-18 11:22:57',
+            ],
+            [
+                'id' => 80,
+                'report_id' => 10,
+                'label' => 'Nazionalità',
+                'field' => 'born_country',
+                'type' => 'string',
+                'type_params' => null,
+                'position' => 15,
+                'is_enabled' => 1,
+                'is_crypted' => 0,
+                'created_at' => '2026-02-18 11:22:57',
+                'updated_at' => '2026-02-18 11:22:57',
+            ],
         ]);
+
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('report_columns');
