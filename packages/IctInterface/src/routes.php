@@ -37,7 +37,6 @@ Route::middleware(['web', 'islogged'])->group(function () {
     Route::resource('/options', 'Packages\IctInterface\Controllers\OptionController');
 
     Route::post('/session_ids', ['Packages\IctInterface\Controllers\IctController', 'storeMultiCheckIds'])->name('session.store');
-    Route::get('/deleteattach', ['Packages\IctInterface\Controllers\AttachmentController', 'delete'])->name('delete.attachments');
 
     Route::resource('/form', 'Packages\IctInterface\Controllers\FormController');
     Route::resource('/formfield', 'Packages\IctInterface\Controllers\FormFieldController');
@@ -66,5 +65,9 @@ Route::middleware(['web', 'islogged'])->group(function () {
         Route::get('form', [Packages\IctInterface\Controllers\ExcelController::class, 'exportForm'])->name('export.form');
         Route::get('formfield', [Packages\IctInterface\Controllers\ExcelController::class, 'exportFormFields'])->name('export.formfield');
         Route::get('roles', [Packages\IctInterface\Controllers\ExcelController::class, 'exportProfileRoles'])->name('export.roles');
+        Route::get('options', [Packages\IctInterface\Controllers\ExcelController::class, 'exportOptions'])->name('export.options');
+
+        // Route di export generica se non è specificata una route dedicata per il report
+        Route::get('excel', [Packages\IctInterface\Controllers\ExcelController::class, 'exportExcel'])->name('export.excel');
     });
 });

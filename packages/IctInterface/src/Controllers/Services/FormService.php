@@ -8,20 +8,16 @@
  * Il rendering dei form è ora gestito dai componenti Livewire e dal DynamicFormService.
  *
  * Metodi preservati: childSaveForm, loadFormFilters, loadFormProperties,
- * getDataToSave, isCrypted, saveFileAttached, upload, etc.
+ * getDataToSave, isCrypted.
  *
  * @author: Giorgio Mecarelli
  */
 
 namespace Packages\IctInterface\Controllers\Services;
 
-use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Packages\IctInterface\Controllers\IctController;
 use Packages\IctInterface\Controllers\Services\Logger;
 use Packages\IctInterface\Controllers\Services\ApplicationService;
@@ -34,7 +30,6 @@ class FormService extends ApplicationService
     public $clearfix;
     public $formUrl;
     public $childFormId = null;
-    public $attach_po_code = null;
     public $actionResponse = [];
     public $childArrFieldName = 'items';
 
@@ -129,199 +124,6 @@ class FormService extends ApplicationService
     public function loadFormByType($id_report, $type)
     {
         return $this->loadFormFilters($id_report, $type);
-    }
-
-    /**
-     * saveFileAttached
-     * Esegue le fasi del salvataggio di un file allegato al form
-     *
-     * @deprecated Usa AttachmentService::store() o storeForImport() con EditableFormComponent.
-     */
-    public function saveFileAttached($model, $id, $prefix = null, $fieldNames = ['attach'])
-    {
-        foreach ($fieldNames as $fieldName) {
-            if (request()->hasFile($fieldName) && $id) {
-                $fileName = $this->uploadFileAttached($id, $prefix, $fieldName);
-                if ($fileName == false) {
-                    $this->log->debug("*UPLOAD FILE FALLITO, NON ESEGUO SCRITTURA SU DB* [{$fileName}]", __FILE__, __LINE__);
-                    return false;
-                }
-                $fileNameToSave = is_null($prefix) ? $fileName : $prefix . '/' . $fileName;
-                if (empty($this->saveFileName($model, $id, [$fieldName => $fileNameToSave]))) {
-                    return false;
-                }
-                if (empty($this->saveAttachArchive($id, $prefix, $fileName))) {
-                    $this->log->debug("*IMPOSSIBILE ARCHIVIARE IL FILE NEL DB* [{$fileName}]", __FILE__, __LINE__);
-                    return false;
-                }
-                $this->log->debug("*FILE ARCHIVIATO NEL DB* [{$fileName}]", __FILE__, __LINE__);
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * saveMultiAttached
-     * Esegue l'upload dei file di un form con nome del tipo array (attach[])
-     *
-     * @deprecated Usa AttachmentService::store() con AttachmentModalComponent.
-     */
-    public function saveMultiAttached($model, $id_record, $fileFields = [], $prefix = null, $fk_key = 'activity_id')
-    {
-        if (!$fileFields) {
-            return true;
-        }
-
-        foreach ($fileFields as $i => $file) {
-            if (is_null($file)) {
-                continue;
-            }
-            $fileName = $file->getClientOriginalName();
-            if ($fileName && is_null($prefix)) {
-                $prefix = substr($fileName, 0, 3);
-            }
-            if ($fileName) {
-                if (!is_null($this->attach_po_code)) {
-                    $oldPoNum = Str::afterLast($fileName, '_');
-                    $oldPoNum = Str::before($oldPoNum, ')');
-                    $fileName = Str::replace($oldPoNum, $this->attach_po_code, $fileName);
-                    $this->attach_po_code = null;
-                }
-
-                if ($this->upload($file, $fileName, $prefix) == false) {
-                    return false;
-                }
-                $dataFileToSave = [
-                    $fk_key => $id_record,
-                    'tag' => $prefix,
-                    'attach' => is_null($prefix) ? $fileName : $prefix . '/' . $fileName,
-                    'user' => session()->get('loggedUser')->email
-                ];
-                if (empty($this->saveFileName($model, null, $dataFileToSave))) {
-                    return false;
-                }
-                $this->log->debug("*SALVATAGGIO DEL FILE NEL DB ESEGUITO* [{$fileName}] id[{$id_record}]", __FILE__, __LINE__);
-
-                if (empty($this->saveAttachArchive($id_record, $prefix, $fileName))) {
-                    $this->log->debug("*IMPOSSIBILE ARCHIVIARE IL FILE NEL DB* [{$fileName}]", __FILE__, __LINE__);
-                    return false;
-                }
-                $this->log->debug("*FILE ARCHIVIATO NEL DB* [{$fileName}]", __FILE__, __LINE__);
-            }
-        }
-        return true;
-    }
-
-    /**
-     * saveAttachArchive
-     * Salva i file nella tabella di archivio files
-     *
-     * @deprecated Usa Attachment model con relazione polimorfica.
-     */
-    public function saveAttachArchive($id_ref, $tag, $fileName, $file = null)
-    {
-        if (is_null($file)) {
-            $date_reference = $type_attach = null;
-        } else {
-            $date_reference = $file['date_reference'];
-            $type_attach = $file['type_attach'];
-        }
-        $res = DB::table('attachment_archives')
-            ->insert([
-                'reference_id' => $id_ref,
-                'type_attach' => $type_attach,
-                'date_reference' => $date_reference,
-                'tag' => $tag,
-                'attach' => $fileName,
-                'user' => session()->get('loggedUser')->email,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        $this->log->sql(DB::getQueryLog(), __FILE__, __LINE__, $res);
-        return $res;
-    }
-
-    /**
-     * uploadFileAttached
-     * Esegue l'upload del file
-     *
-     * @deprecated Usa AttachmentService::store() o storeForImport().
-     */
-    public function uploadFileAttached($id, $prefix = null, $fieldName = 'attach')
-    {
-        $file = request()->file($fieldName);
-        $fileName = $this->_setFileName($id, $file, $prefix);
-        if ($this->upload($file, $fileName, $prefix) == false) {
-            return;
-        }
-        return $fileName;
-    }
-
-    /**
-     * upload
-     * Esegue l'upload del file
-     *
-     * @deprecated Usa AttachmentService::store() o storeForImport().
-     */
-    public function upload($file, $fileName, $prefix)
-    {
-        if (is_null($file) || is_null($fileName)) {
-            $this->log->warning("*UPLOAD FILE NULL* [{$fileName}]", __FILE__, __LINE__);
-            return false;
-        }
-
-        $filePath = "{$prefix}/";
-
-        try {
-            $upload = Storage::putFileAs("public/upload/{$filePath}", $file, $fileName);
-
-            if (!$upload) {
-                $this->log->debug("*UPLOAD FILE FALLITO!!!* [{$fileName}]", __FILE__, __LINE__);
-                return false;
-            }
-        } catch (\Exception $e) {
-            $this->log->error("*UPLOAD FILE FALLITO ECCEZIONE!!!* [{$fileName}] [{$e->getMessage()}]", __FILE__, __LINE__);
-            return false;
-        }
-
-        return true;
-    }
-
-    public function setUploadDir($prefix = null)
-    {
-        return is_null($prefix) ? config('ict.upload_dir') . '/' : config('ict.upload_dir') . '/' . $prefix;
-    }
-
-    /**
-     * saveFileName
-     * UPDATE: aggiorna il valore del campo del file con il nome_file convenzionale
-     *
-     * @deprecated Usa AttachmentService per la gestione dei nomi file.
-     */
-    public function saveFileName($model, $id, $fieldsToSave = [])
-    {
-        if (is_null($id)) {
-            $res = $model->create($fieldsToSave);
-        } else {
-            $res = $model->where('id', '=', $id)->update($fieldsToSave);
-        }
-
-        $this->log->sql(DB::getQueryLog(), __FILE__, __LINE__, $res);
-        return $res;
-    }
-
-    /**
-     * _setFileName
-     * Rinomina il file come da convenzione
-     *
-     * @deprecated Usa AttachmentService per la gestione dei nomi file.
-     */
-    private function _setFileName($id, $file, $prefix = null)
-    {
-        $fileName = $prefix . "_" . $id . "_" . date("YmdHis") . "." . $file->extension();
-        $this->log->debug("*FILE RINOMINATO* [{$fileName}]", __FILE__, __LINE__);
-        return $fileName;
     }
 
     /**

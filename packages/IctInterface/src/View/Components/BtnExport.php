@@ -22,7 +22,7 @@ class BtnExport extends Component
 
         $this->label = $label;
         $this->format = $format == 'xlsx' ? 'xls' : $format;
-        $this->route = Route::has('export.'.$route) ? route('export.'.$route) : url()->current();
+        $this->route = Route::has('export.'.$route) ? route('export.'.$route) : route('export.excel');
         $this->btn = $btn;
 
         if(empty(request()->input('report'))) {

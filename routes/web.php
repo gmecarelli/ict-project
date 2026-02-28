@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\ExportController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -21,11 +22,6 @@ require base_path('packages/IctInterface/src/routes.php');
 Route::middleware(['web', 'islogged'])->group(function () {
     Route::resource('/books', BookController::class);
     Route::resource('/authors', AuthorController::class);
-
-    Route::prefix('export')->group(function () {
-        Route::get('books', [BookController::class, 'exportBooks'])->name('export.books');
-        Route::get('authors', [AuthorController::class, 'exportAuthors'])->name('export.authors');
-    });
 
     /**
      * FINDER
