@@ -60,6 +60,7 @@ I campi `file` nei form devono supportare **due modalita'**:
 Il file viene salvato su filesystem e registrato in una tabella dedicata.
 
 1. Upload file su `storage/app/public/uploads/` (directory di default configurabile)
+1.1 avere la possibilità di passare come parametro il nome di una cartella dove salvare i file (path tipo: storage/app/public/uploads/[nome_cartella_passata_come_parametro])
 2. Registrazione su tabella `attachments` con metadati (nome originale, path, estensione, ecc.)
 3. Gli altri campi del form vengono salvati normalmente sulla tabella di destinazione
 4. Eliminazione file = eliminazione record DB + file su filesystem
@@ -71,7 +72,7 @@ Il file viene salvato su filesystem come supporto per un'elaborazione custom.
 
 1. Upload file su filesystem (stessa directory)
 2. Gli altri campi del form (incluso il nome del file) vengono salvati sulla tabella di riferimento
-3. L'applicazione deve poter definire una funzione custom per elaborare il file dopo il salvataggio (es. parsare un CSV e inserire righe in tabella)
+3. L'applicazione deve poter definire una funzione custom per elaborare il file dopo il salvataggio (es. parsare un CSV/excel e inserire righe in tabella con maatwebsite)
 
 ### Requisito trasversale — Estensibilita'
 
