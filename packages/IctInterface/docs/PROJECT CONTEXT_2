@@ -1,0 +1,126 @@
+PROJECT CONTEXT
+ 
+Laravel12, Livewire 3 and Flux 2.21 are already installed. We have a custom Laravel package located in:
+ 
+packages/IctInterface
+Change name and rename IctInterface folder to zoe; namespaces and all references too. 
+ 
+This package provides a dynamic interface system that allows:
+- Creation and configuration of Reports (record lists)
+- Dynamic column management per report
+- Dynamic form management (insert/edit)
+- Filter forms
+- Modal forms
+- Dynamic form fields
+- Multiselect functionality
+- CSV/XLSX export
+- User management
+- User profiles
+- upload files
+- creation and configurazione main menu (container of reports)
+- creation and configuration of Options
+ 
+The current implementation is based on:
+- Laravel (older version)
+- Bootstrap
+- jQuery
+ 
+GOAL
+ 
+Refactor and upgrade the entire package to:
+ 
+- Laravel 12
+- Livewire 3
+- Bootstrap 5
+- Flux 2.12 (UI layer)
+- if possibile replace fontawesome with icons livewire (if available), otherwise upgrade fontawesome to latest version
+- Replace jQuery with Livewire/Flux login for ajax calls and dynamic functionalities on the pages.
+ 
+IMPORTANT CONSTRAINTS
+
+1. Database structure (tables and migrations) MUST remain unchanged.
+2. All existing functionalities must be preserved.
+3. The package must remain reusable as a Laravel package.
+4. Remove jQuery completely and replace all jQuery logic with Laravel/Flux logic.
+5. Maintain frontend logic and replace where necessary with Livewire and Flux Logix
+6. All forms and reports funcionally have to implements with livewire/flux logic, no jQuery.
+7. Remove package formBuilder and replace it with livewire/Flux logic
+8. Maintain, where possible, bootstrap logic upgraded to version 5 for general layout (headers, containers, cards, etc.)
+9. Actual logic provides the requst variable "report" (report_id). This is mandatory on every links less dashboard
+10. Maintain all routes on routes/web.php
+
+FUNCTIONAL REQUIREMENTS TO PRESERVE
+
+1. Report management:
+   - Create, edit, delete reports
+   - Configure columns per report
+   - Sorting
+   - Filtering
+   - Pagination
+ 
+2. Column management:
+   - Dynamic columns
+   - Visibility toggle
+   - Ordering
+   - preserve type data (text, number, enum, date, etc.)
+ 
+3. Forms:
+   - Insert/Edit forms
+   - Filter forms
+   - Modal forms
+   - Dynamic form fields
+   - Validation
+ 
+4. Field types:
+   - text
+   - textarea
+   - select
+   - multiselect
+   - date
+   - checkbox
+   - etc.
+ 
+5. Multiselect:
+   - Must work with Livewire
+   - No jQuery-based plugins
+   - Support for relationships
+   - Remove javascript logic
+ 
+6. Export:
+   - CSV export
+   - XLSX export
+   - Keep backend export logic
+   - Refactor frontend triggers to Livewire actions
+
+7. Users and profiles:
+   - Use livewire user management (login, register, change pass)
+   - table reference must be users
+   - middlware authentication must have the same logic of AuthIct
+      - report variable must be mandatory less on dashboard
+      - the same session variable must be available (loggedUser, is_admin, roles, profiles, etc.)
+   - Maintain profile association with current login linked to table users
+   - Refactor UI to Livewire + Bootstrap
+
+8. Main layout
+    - maintain header on all pages (login included) with app name on the left and user name and link logout on the right
+    - the main color (green, red, blue, etc) must be customizable on custom style.css or .env variable
+    - maintain navigation accordation menu on the left, where the content element are records of menu table and submenu elemnt are record of report table
+    - highlight color must be the same of header color
+
+9. migrations
+    - Get and copy in pachages/zoe/Database/Migrations folder migrations files refer to package tables (report. report_columns, forms, etc.) in database/migration folder in the root. Exclude vw_users view file.
+
+10. Date range
+    - Use Livewire date range component
+    - Refactor UI to Livewire + Bootstrap
+
+TECHNICAL REQUIREMENTS
+ 
+- Use modern Laravel 12 conventions ONLY on new files
+- Improve existing code readability and maintainability
+- Use typed properties and return types
+- Remove obsolete helpers
+- Maintain all poackages helpers
+- Follow SOLID principles
+- Avoid duplicated logic
+- Use service classes where appropriate

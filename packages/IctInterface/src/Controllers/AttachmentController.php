@@ -2,7 +2,6 @@
 
 namespace Packages\IctInterface\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Packages\IctInterface\Models\Attachment;
 use Packages\IctInterface\Models\AttachmentArchive;

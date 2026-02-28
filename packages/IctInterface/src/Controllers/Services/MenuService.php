@@ -33,7 +33,7 @@ class MenuService extends BaseService
                 'title AS title_menu', 
                 'icon', 
                 'tooltip')
-                    ->orderBy('order')
+                    ->orderBy('position')
                     ->get();
         $this->log->sql(DB::getQueryLog(),__FILE__,__LINE__);
         
@@ -55,7 +55,7 @@ class MenuService extends BaseService
         $menuComposer = [];
         
         foreach($menus as $menu) {
-            // $menu_reports = $menuModel->find($menu->id)->reports()->orderBy('order')->get()->toArray();
+            // $menu_reports = $menuModel->find($menu->id)->reports()->orderBy('position')->get()->toArray();
             // dd($menu_reports);
             $submenu = [];
             $voice = $menu->title_menu;
@@ -104,7 +104,7 @@ class MenuService extends BaseService
                 if($this->isAdmin() == false) {
                     $res = $res->whereIn('profile_id', session('profiles'));
                 }
-                $res = $res->orderBy('order')
+                $res = $res->orderBy('position')
                             ->get();
         $this->log->sql(DB::getQueryLog(),__FILE__,__LINE__);
 

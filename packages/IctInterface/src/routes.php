@@ -36,7 +36,7 @@ Route::middleware(['web', 'islogged'])->group(function () {
     Route::resource('/roles', 'Packages\IctInterface\Controllers\ProfileRoleController');
     Route::resource('/options', 'Packages\IctInterface\Controllers\OptionController');
 
-
+    Route::post('/session_ids', ['Packages\IctInterface\Controllers\IctController', 'storeMultiCheckIds'])->name('session.store');
     Route::get('/deleteattach', ['Packages\IctInterface\Controllers\AttachmentController', 'delete'])->name('delete.attachments');
 
     Route::resource('/form', 'Packages\IctInterface\Controllers\FormController');

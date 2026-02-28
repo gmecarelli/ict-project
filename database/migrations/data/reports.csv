@@ -1,0 +1,11 @@
+id,menu_id,title,route,table,blade,sum,position,where_condition,group_by,order_by,href_url,href_target,include_file,has_create_button,has_edit_button,class_delete_button,multicheck_reference,is_enabled,is_show_menu,is_editable,created_at,updated_at
+1,1,"Configura Menu",menu,menus,report,NULL,10,NULL,NULL,NULL,/menu,_self,NULL,1,1,destroy,NULL,1,1,1,"2021-06-01 12:28:32","2023-08-31 09:45:13"
+2,1,"Configura Report",report,reports,report,NULL,15,NULL,NULL,NULL,/report,_self,NULL,1,1,destroy,NULL,1,1,1,"2021-06-01 12:28:32","2021-07-21 08:44:40"
+3,1,"Conf. colonne Report",reportcol,report_columns,report,NULL,15,NULL,NULL,NULL,/reportcol,_self,NULL,0,1,destroy,NULL,1,1,1,"2021-06-01 12:28:32","2021-07-21 08:42:43"
+4,1,"Configura form",form,forms,report,NULL,50,NULL,NULL,NULL,/form,_self,NULL,1,1,destroy,NULL,1,1,1,"2021-07-12 10:41:10","2023-08-31 13:55:27"
+5,1,"Conf. Form Fields",formfield,form_fields,report,NULL,55,NULL,NULL,NULL,/formfield,_self,NULL,0,1,destroy,NULL,1,1,1,"2021-07-12 11:24:51","2021-12-20 11:28:51"
+6,2,"Profili utenti",profiles,profiles,report,NULL,25,NULL,NULL,NULL,/profiles,_self,NULL,1,1,cancel,NULL,1,1,1,"2022-02-26 11:11:29","2022-03-16 15:11:29"
+7,2,"Dettaglio ruoli profilo",roles,profile_roles,report,NULL,30,NULL,NULL,NULL,/roles,_self,NULL,0,1,cancel,NULL,1,1,1,"2022-02-26 15:29:10","2022-03-16 15:11:19"
+8,1,"Parametri di utilità",options,options,report,NULL,10,NULL,NULL,NULL,/options,_self,NULL,1,1,destroy,PUTY,1,1,1,"2023-08-31 07:31:20","2023-08-31 07:40:42"
+9,3,Libri,books,books,report,NULL,5,NULL,NULL,NULL,/books,_self,NULL,1,1,destroy,NULL,1,1,1,"2026-02-18 11:10:07","2026-02-18 11:20:45"
+10,3,Autori,authors,authors,report,NULL,10,NULL,NULL,NULL,/authors,_self,NULL,1,1,cancel,NULL,1,1,1,"2026-02-18 11:21:34","2026-02-18 11:22:57"

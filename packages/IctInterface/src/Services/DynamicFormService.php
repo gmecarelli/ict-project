@@ -250,7 +250,7 @@ class DynamicFormService
             ->where('name', $fieldName)
             ->first();
 
-        return $formField ? (bool) $formField->is_crypted : false;
+        return $formField ? ($formField->type === 'crypted') : false;
     }
 
     public function isFieldMultiselect(string $fieldName, int $formId): bool

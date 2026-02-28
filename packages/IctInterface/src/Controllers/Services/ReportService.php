@@ -31,6 +31,7 @@ class ReportService extends ApplicationService
     public $countRecords;
     public $whereFunction;
     public $groupBy;
+    public $orderBy;
     public $reportProp;
 
     public $countRows;
@@ -166,12 +167,10 @@ class ReportService extends ApplicationService
                         $report = $this->loadReportProperties(request()->input('report'));
 
                         if (!is_null($report['where_condition'])) {
-
                             $query->whereRaw($report['where_condition']);
                         }
 
                         if (Schema::hasColumn($objModel->getTable(), 'is_enabled') == true) {
-
                             //se la tabella che si sta interrogando ha il campo is_enabled 
                             $query->where('is_enabled', 1);
                         }
@@ -179,10 +178,18 @@ class ReportService extends ApplicationService
                         if (!is_null($report['group_by'])) {
                             $this->groupBy = explode(",", $report['group_by']);
                         }
+
+                        if (!is_null($report['order_by']) && !request()->filled('ob') && !request()->filled('ot')) {
+                            $this->setOrderBy($report['order_by']);
+                        }
                     });
                 if (!is_null($this->groupBy)) {
-
                     $rec = $rec->groupBy($this->groupBy);
+                }
+                if (!is_null($this->orderBy)) {
+                    foreach ($this->orderBy as $order) {
+                        $rec = $rec->orderBy($order[0], $order[1]);
+                    }
                 }
 
                 $this->countRecords = $rec->get()->count(); //imposto il contatore delle righe trovate
@@ -216,6 +223,14 @@ class ReportService extends ApplicationService
         } catch (Exception $e) {
             dd($e->getMessage(), $e->getLine(), $e->getFile());
         }
+    }
+
+    public function setOrderBy($strToParse) {
+        $orderBy = _parser($strToParse);
+        $this->orderBy = collect($orderBy)
+                                    ->map(fn ($order, $field) => [$field, $order ?? 'asc'])
+                                    ->values()
+                                    ->toArray();
     }
 
     /**
@@ -287,7 +302,6 @@ class ReportService extends ApplicationService
         }
 
         if ($paginate == false) {
-
             return $resultset->get()->toArray();
         }
 
@@ -393,7 +407,6 @@ class ReportService extends ApplicationService
 
     public function setWhereReport($resultset)
     {
-
         if (!is_null($this->reportProp['where_condition'])) {
             //personalizzazione per commesse. Se attivo il filtro data_curdate sostituisce la stringa CURDATE() nella whereCondition del report 
             if (request()->has('__data_curdate')) {
@@ -630,23 +643,13 @@ class ReportService extends ApplicationService
                         }
                     } else {
                         if (request()->filled($field->name)) {
-                            $values = request()->input($field->name);  // Recupera l'array
+                            $values = request()->input($field->name);  // Recupera l'array di valori dal campo di input
                             if (is_array($values)) {
-                                $first = true; // Flag per identificare il primo valore
-
+                                
                                 foreach ($values as $value) {
                                     if (is_array($value)) {
                                         foreach ($value as $item) {
-
                                             $whereFilters['orWhere'][] = [$trueFieldName, '=', $item]; // Qui usiamo 'or'
-
-                                            // Se è il primo filtro, usa "where", altrimenti usa "orWhere"
-                                            // if ($first) {
-                                            //     $whereFilters['where'][] = [$trueFieldName, '=', $item];
-                                            //     $first = false;
-                                            // } else {
-
-                                            // }
                                         }
                                     } else {
                                         $whereFilters['orWhere'][] = [$trueFieldName, '=', $values]; // Qui usiamo 'or'
@@ -658,16 +661,8 @@ class ReportService extends ApplicationService
                             }
                         }
                     }
-                    //  elseif (is_numeric(request()->input($field->name))) {
-                    //     if (request()->filled($field->name)) {
-                    //         $whereFilters['where'][] = [$trueFieldName, '=', request()->input($field->name)];
-                    //     }
-                    // } 
-
                 }
-                // if(Schema::hasColumn($Model->getTable(), 'is_enabled') == true) {
-                //     $whereFilters['where'][] = ['is_enabled','=',1];
-                // }
+
                 $this->log->debug("*ARRAY FILTERS* " . print_r($whereFilters, true), __FILE__, __LINE__);
                 // session()->flash('whereFilters', $whereFilters);
             } elseif (session()->has('whereFilters')) {
@@ -700,11 +695,6 @@ class ReportService extends ApplicationService
 
         $this->log->info("*ELABORO I TIPO DI DATO PER UNA VISUALIZZAZIONE LEGGIBILE (TIPO_DATO)* ", __FILE__, __LINE__);
 
-        // $defaultArrOptions = [
-        //     'table' => 'options',
-        //     'code' => 'code',
-        //     'label' => 'label',
-        // ];
         /**
          * Faccio iterazione dei dati letti da presentare sul report
          * Per ogni record itero tutti i campi del form con le loro proprietà

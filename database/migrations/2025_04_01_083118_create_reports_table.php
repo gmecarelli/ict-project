@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('table', 150)->nullable();
             $table->string('blade', 150)->default('report')->comment('File view/blade dove viene visualizzato il report');
             $table->string('sum')->nullable();
-            $table->integer('order')->default(10);
+            $table->integer('position')->default(10);
             $table->string('where_condition', 100)->nullable();
             $table->string('group_by', 150)->nullable();
             $table->string('href_url')->nullable();
@@ -50,7 +50,7 @@ return new class extends Migration
                 'table' => 'menus',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 10,
+                'position' => 10,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/menu',
@@ -74,7 +74,7 @@ return new class extends Migration
                 'table' => 'reports',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 15,
+                'position' => 15,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/report',
@@ -98,7 +98,7 @@ return new class extends Migration
                 'table' => 'report_columns',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 15,
+                'position' => 15,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/reportcol',
@@ -122,7 +122,7 @@ return new class extends Migration
                 'table' => 'forms',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 50,
+                'position' => 50,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/form',
@@ -146,7 +146,7 @@ return new class extends Migration
                 'table' => 'form_fields',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 55,
+                'position' => 55,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/formfield',
@@ -170,7 +170,7 @@ return new class extends Migration
                 'table' => 'profiles',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 25,
+                'position' => 25,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/profiles',
@@ -194,7 +194,7 @@ return new class extends Migration
                 'table' => 'profile_roles',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 30,
+                'position' => 30,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/roles',
@@ -218,7 +218,7 @@ return new class extends Migration
                 'table' => 'options',
                 'blade' => 'report',
                 'sum' => null,
-                'order' => 10,
+                'position' => 10,
                 'where_condition' => null,
                 'group_by' => null,
                 'href_url' => '/options',

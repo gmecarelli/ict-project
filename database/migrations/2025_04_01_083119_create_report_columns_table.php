@@ -181,7 +181,7 @@ return new class extends Migration
                 'id' => 13,
                 'report_id' => 2,
                 'label' => 'Posizione',
-                'field' => 'order',
+                'field' => 'position',
                 'type' => 'int',
                 'type_params' => null,
                 'position' => 10,

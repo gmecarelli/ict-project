@@ -29,7 +29,7 @@ class MenusTableSeeder extends Seeder
                 'name' => 'Configurazione',
                 'description' => 'Configurazione',
                 'icon' => 'fas fa-wrench',
-                'order' => 50,
+                'position' => 50,
                 'is_enabled' => 1,
                 'created_at' => Carbon::parse('2021-06-01 10:28:32'),
                 'updated_at' => Carbon::parse('2023-08-31 07:55:30')
@@ -39,7 +39,7 @@ class MenusTableSeeder extends Seeder
                 'name' => 'Profili utenti',
                 'description' => 'Gestione profili utente',
                 'icon' => 'fas fa-user-friends',
-                'order' => 50,
+                'position' => 50,
                 'is_enabled' => 1,
                 'created_at' => Carbon::parse('2022-03-16 14:11:09'),
                 'updated_at' => Carbon::parse('2023-08-31 07:54:36')

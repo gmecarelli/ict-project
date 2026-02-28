@@ -1,0 +1,25 @@
+Analizza la sezione attachment perché appare inutile, inutilizzata ed inutilizzabile attualmente. Questa ci deve essere e funzionare così:
+1. i campi file inseriti nei form possono avere 2 destinazioni:
+	a) salvataggio e registrazione file allegato
+	b) funzione di importazione dati
+
+Nel caso a) 
+1.i campi file (quindi il file) inseriti nei form devono essere registrati su db e filesystem (la cartella di destinazione di default deve essere storage/uploads), gli altri salvati sulla tabella di destinazione
+2. deve essere creata una tabella con questi campi
+id
+file_name_server
+file_name_original
+descrition
+path
+ext
+created_at
+updated_at
+3. se il file viene eliminato deve essere eliminato record e file sul filesystem
+4. prevedere anche l'accessibilità su modale di un form con un campo file per la semplice registrazione a db e salvataggio del file.  
+
+Nel caso b)
+1. il file viene saltato su filesystem
+2. eventuali altri campi del form (incluso nome del file) devono essere salvati sulla tabella di riferimento
+3. deve essere possibile scrivere a livello di applicazione (quindi il package deve rendere disponibile la cosa) una funzione dove scrivere il codice necessario per recuperare il file appena salvato ed elaborriprova arlo secondo necessità
+
+Tutte le azioni descritte intrinseche al package devono poter essere personalizzate/sovrascritte facilmente a livello di applicazione senza toccare la logica del package. Salva tutta l'analisi nel file ATTACHMENTS.md nella cartella ICtInterface/docs

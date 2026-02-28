@@ -61,7 +61,7 @@ class FormService extends ApplicationService
      * childSaveForm
      * Salva i dati di un form Child. Il salvataggio dei child è sempre una INSERT
      */
-    public function childSaveForm($Model, $referenceId, $data, $fieldReference = 'order_id')
+    public function childSaveForm($Model, $referenceId, $data, $fieldReference = 'report_id')
     {
         if (!$data['items']) {
             return null;
@@ -363,9 +363,6 @@ class FormService extends ApplicationService
                 ->where($where)
                 ->update(['is_enabled' => 0]);
             $this->log->sql(DB::getQueryLog(), __FILE__, __LINE__, $res);
-            if (empty($res) && $table == "orders") {
-                return false;
-            }
         }
         return true;
     }

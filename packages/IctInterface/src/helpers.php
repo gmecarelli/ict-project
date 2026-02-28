@@ -34,6 +34,17 @@ function _encrypt($val)
     $app = new \Packages\IctInterface\Controllers\Services\ApplicationService();
     return $app->_encrypt($val);
 }
+
+/**
+ * _parser
+ * Parsa la stringa dei parametri scritta nel db (formato nome_chiave_1:valore_1,nome_chiave_2:valore_2) e la trasforma in un array associativo
+ * @param  mixed $val
+ * @return array
+ */
+function _parser($val) {
+    $app = new \Packages\IctInterface\Controllers\Services\ApplicationService();
+    return $app->stringToArray($val);
+}
 /**
  * _day
  * Restituisce il giorno di una data

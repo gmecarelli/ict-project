@@ -20,10 +20,11 @@
 namespace Packages\IctInterface\Livewire;
 
 use Exception;
-use Livewire\Component;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use Livewire\Component;
 use Packages\IctInterface\Services\DynamicFormService;
 
 class ChildFormComponent extends Component
@@ -150,9 +151,20 @@ class ChildFormComponent extends Component
         }
 
         $records = $query->get();
+        _log()->sql(DB::getQueryLog(),__FILE__, __LINE__);
 
         $this->existingItems = $records->map(function ($record) {
-            return (array) $record;
+            $item = (array) $record;
+            foreach ($this->childFields as $field) {
+                if ($field['type'] === 'crypted' && !empty($item[$field['name']] ?? null)) {
+                    try {
+                        $item[$field['name']] = _decrypt($item[$field['name']]);
+                    } catch (Exception $e) {
+                        // Lascia il valore originale
+                    }
+                }
+            }
+            return $item;
         })->toArray();
     }
 
@@ -220,16 +232,20 @@ class ChildFormComponent extends Component
                 // Imposta la foreign key
                 $item[$this->foreignKey] = $this->parentRecordId;
 
+                // Cifra i campi criptati
+                foreach ($this->childFields as $field) {
+                    if ($field['type'] === 'crypted' && !empty($item[$field['name']])) {
+                        $item[$field['name']] = _encrypt($item[$field['name']]);
+                    }
+                }
                 // Rimuovi campi guarded
                 foreach ($this->childFields as $field) {
                     if (!empty($field['is_guarded'])) {
                         unset($item[$field['name']]);
                     }
                 }
-
                 DB::table($this->childTableName)->insert($item);
             }
-
             DB::commit();
 
             // Svuota i nuovi items e ricarica quelli esistenti

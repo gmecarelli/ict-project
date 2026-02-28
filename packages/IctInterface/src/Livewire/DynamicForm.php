@@ -64,6 +64,8 @@ abstract class DynamicForm extends Component
             if (isset($model->$name)) {
                 if ($field['type'] === 'multiselect' && is_string($model->$name)) {
                     $this->formData[$name] = json_decode($model->$name, true) ?? [];
+                } elseif($field['type'] === 'crypted') {
+                    $this->formData[$name] = _decrypt($model->$name) ?? null; // Non precompilare i campi criptati
                 } else {
                     $this->formData[$name] = $model->$name;
                 }

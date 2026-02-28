@@ -1,0 +1,20 @@
+crea un file makedown con un'analisi approfondita e dettagliata per fare il refactoring del package IctInterface nella cartella packages.
+
+Scopo:
+lo scopo è quello di eliminare il package formbuilder e sostituirlo con altri framework.
+Attualmente vengono usati bootstrap v5 e jQuery, mi devi suggerire quali framework utilizzare (Livewire, Filament, etc.) per fare il refactoring del package.
+Se necessario, durante l'analisi, fai delle domande
+
+Il package in sintesi provvede a gestire direttamente da db/interfaccia
+1. report (liste di record in tabelle)
+2. form (creazione dinamica dei form in base ai dati inseriti a db)
+3. gestione profilazione utenti
+4. il package gestisce di fatto anche l'autenticazione
+5. upload file
+6. export su file excel
+
+Nell'analisi va tenuto conto che:
+1. Laravel dovrà essere aggiornato alla versione 12 (versione attuale Laravel 10.x)
+2. il codice del package va modificato dove necessario senza modificarlo su convenzione Laravel 12
+3. solo eventuale codice nuovo di integrazione va scritto su convenzione Laravel 12
+4. il processo di refactoring deve essere fatto a step partendo prima dalla sostizione/eliminazione del package formBuilder in base agli strumenti suggeriti, poi capire se possibile lasciare bootstrap (upgrade to latest version) e sostituire jQuery

@@ -2,17 +2,7 @@
 
 namespace App\Http\Controllers\Classes;
 
-use App\Models\Order;
-use App\Models\Stock;
-use App\Models\Prodotti;
-use App\Models\Supplier;
-use App\Models\Trademark;
-use App\Models\Produttori;
-use App\Models\SalesAgent;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Models\FatturaPassiva;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 

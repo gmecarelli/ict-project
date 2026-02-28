@@ -343,15 +343,13 @@ class ApplicationService extends BaseService
         // $this->log->debug("*FUNC TIPO DATO* [{$func}]",__FILE__,__LINE__);
         if (method_exists($this, $func)) {
 
-            if ($col->is_crypted == 1) {
-
-                $value = $this->_decrypt($value);
+            if ($col->type == 'crypted' && !empty($value)) {
+                return $this->_decrypt($value);
             }
             return $func == '_switch' || $func == '_match' ? $this->$func($value, $col, $model) : $this->$func($value, $col);
         } else {
-            if ($col->is_crypted == 1) {
-                dd('qui');
-                $value = $this->_decrypt($value);
+            if ($col->type == 'crypted' && !empty($value)) {
+                return $this->_decrypt($value);
             }
             return $this->_string($value);
         }
@@ -689,15 +687,17 @@ class ApplicationService extends BaseService
     }
 
     public function _decrypt($value, $col = null)
-    {
-        if (isset($value)) {
-            $value = Crypt::decryptString($value);
-
+{
+    if (empty($value)) return null;
+        try {
+            return Crypt::decryptString($value);
+        } catch (\Exception $e) {
             return $value;
         }
     }
     public function _encrypt($value, $col = null)
     {
+        if (empty($value)) return null;
         return Crypt::encryptString($value);
     }
     /**
