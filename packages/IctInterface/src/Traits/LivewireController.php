@@ -3,21 +3,9 @@
 /**
  * LivewireController
  *
- * Trait alternativo a StandardController per i controller che usano
- * i nuovi componenti Livewire al posto di kris/laravel-form-builder.
- *
- * Differenze rispetto a StandardController:
- * - index(), create(), edit() NON richiedono FormBuilder come parametro
- * - create() e edit() passano alla view solo reportId/recordId/tableName
- *   + il flag useLivewireForm=true (il form è gestito dal componente Livewire)
- * - store() e update() NON sono necessari (Livewire gestisce il submit),
- *   ma sono mantenuti come fallback per eventuali form non ancora migrati
- * - destroy() e disabled() restano identici a StandardController
- *
- * Migrazione graduale: per migrare un controller basta sostituire
- *   use StandardController;
- * con
- *   use LivewireController;
+ * Trait per i controller CRUD che usano i componenti Livewire.
+ * Fornisce i metodi index(), create(), edit(), destroy(), disabled()
+ * e gestisce il caricamento di report, form e filtri dal database.
  *
  * @author: Giorgio Mecarelli
  */
