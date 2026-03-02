@@ -9,6 +9,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (!Schema::hasTable('profile_roles')) {
         Schema::create('profile_roles', function (Blueprint $table) {
             $table->id();
             $table->string('profile_id', 40);
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->index('is_enabled', 'profile_roles_is_enabled_index');
             $table->unique(['profile_id', 'report_id'], 'profile_roles_profile_id_report_id_unique');
         });
+        }
     }
 
     public function down(): void
