@@ -90,39 +90,24 @@ class MakeModelCustom extends Command
 
 namespace {{ namespace }};
 
-use App\Http\Controllers\Controller;
+use Packages\IctInterface\Controllers\IctController;
 use App\Models\{{ model }};
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
+use Packages\IctInterface\Traits\LivewireController;
 
-class {{ class }} extends Controller
+class {{ class }} extends IctController
 {
-    public function index(): JsonResponse
-    {
-        return response()->json(['data' => {{ model }}::all()]);
-    }
+    use LivewireController { 
+            index as traitIndex; 
+            create as traitCreate; 
+            edit as traitEdit; 
+        }
 
-    public function store(Request $request): JsonResponse
+    public function __construct()
     {
-        $item = {{ model }}::create($request->validated());
-        return response()->json(['data' => $item], 201);
-    }
-
-    public function show({{ model }} ${{ modelVariable }}): JsonResponse
-    {
-        return response()->json(['data' => ${{ modelVariable }}]);
-    }
-
-    public function update(Request $request, {{ model }} ${{ modelVariable }}): JsonResponse
-    {
-        ${{ modelVariable }}->update($request->validated());
-        return response()->json(['data' => ${{ modelVariable }}]);
-    }
-
-    public function destroy({{ model }} ${{ modelVariable }}): JsonResponse
-    {
-        ${{ modelVariable }}->delete();
-        return response()->json(null, 204);
+        parent::__construct();
+        $this->__init();
+        $this->model = new {{ model }}();
+        $this->foreignKey = null;
     }
 }
 STUB;

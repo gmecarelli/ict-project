@@ -2,6 +2,7 @@
 
 namespace Packages\IctInterface\Providers;
 
+use Packages\IctInterface\Console\Commands\MakeActionHandler;
 use Packages\IctInterface\Console\Commands\MakeModelCustom;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
@@ -102,6 +103,7 @@ class IctServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
+                MakeActionHandler::class,
                 MakeModelCustom::class,
             ]);
 
