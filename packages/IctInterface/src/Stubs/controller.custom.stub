@@ -1,0 +1,24 @@
+<?php
+
+namespace {{ namespace }};
+
+use Packages\IctInterface\Controllers\IctController;
+use App\Models\{{ model }};
+use Packages\IctInterface\Traits\LivewireController;
+
+class {{ class }} extends IctController
+{
+    use LivewireController { 
+            index as traitIndex; 
+            create as traitCreate; 
+            edit as traitEdit; 
+        }
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->__init();
+        $this->model = new {{ model }}();
+        $this->foreignKey = null;
+    }
+}

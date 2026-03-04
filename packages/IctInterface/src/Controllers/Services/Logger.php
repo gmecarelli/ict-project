@@ -85,14 +85,19 @@ class Logger
      * @return void
      */
     public function sql($arr, $file, $line, $res = '', $printOut = false) {
-        $query = end($arr);
-        $sql = $query['query'];
-        // $sql = Str::replaceArray('?', $query['bindings'], $sql);
-        foreach($query['bindings'] as $binding) {
-            $binding = is_numeric($binding) ? $binding : "'{$binding}'";
-            $sql = Str::replaceFirst("?",$binding, $sql);
+        if(is_string($arr)) {
+            $sql = $arr;
+            $query = ['query' => $arr, 'bindings' => [], 'time' => 0];
+        } else {
+            $query = end($arr);
+            $sql = $query['query'];
+            // $sql = Str::replaceArray('?', $query['bindings'], $sql);
+            foreach($query['bindings'] as $binding) {
+                $binding = is_numeric($binding) ? $binding : "'{$binding}'";
+                $sql = Str::replaceFirst("?",$binding, $sql);
+            }
         }
-
+        
         if($printOut == 'dump') {
             dump("[{$sql}] res[{$res}] [time:{$query['time']}]");
         } elseif($printOut == 'return') {

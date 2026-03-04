@@ -2,28 +2,29 @@
 
 namespace Packages\IctInterface\Providers;
 
-use Livewire\Livewire;
+use Packages\IctInterface\Console\Commands\MakeModelCustom;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
-use Packages\IctInterface\Livewire\FilterFormComponent;
-use Packages\IctInterface\Livewire\SearchFormComponent;
-use Packages\IctInterface\Livewire\EditableFormComponent;
-use Packages\IctInterface\Livewire\ChildFormComponent;
-use Packages\IctInterface\Livewire\ModalFormComponent;
-use Packages\IctInterface\Livewire\DeleteConfirmComponent;
-use Packages\IctInterface\Livewire\UserProfileManagerComponent;
-use Packages\IctInterface\Livewire\MulticheckManagerComponent;
-use Packages\IctInterface\Livewire\BoolSwitchComponent;
+use Livewire\Livewire;
 use Packages\IctInterface\Livewire\AttachmentModalComponent;
-use Packages\IctInterface\View\Components\BtnEdit;
+use Packages\IctInterface\Livewire\BoolSwitchComponent;
+use Packages\IctInterface\Livewire\ChildFormComponent;
+use Packages\IctInterface\Livewire\DeleteConfirmComponent;
+use Packages\IctInterface\Livewire\EditableFormComponent;
+use Packages\IctInterface\Livewire\FilterFormComponent;
+use Packages\IctInterface\Livewire\ModalFormComponent;
+use Packages\IctInterface\Livewire\MulticheckManagerComponent;
+use Packages\IctInterface\Livewire\SearchFormComponent;
+use Packages\IctInterface\Livewire\UserProfileManagerComponent;
 use Packages\IctInterface\View\Components\BtnCreate;
 use Packages\IctInterface\View\Components\BtnDelete;
+use Packages\IctInterface\View\Components\BtnEdit;
 use Packages\IctInterface\View\Components\BtnExport;
-use Packages\IctInterface\View\Components\TitleForm;
-use Packages\IctInterface\View\Components\TitlePage;
+use Packages\IctInterface\View\Components\DynamicField;
 use Packages\IctInterface\View\Components\NavSidebar;
 use Packages\IctInterface\View\Components\Pagination;
-use Packages\IctInterface\View\Components\DynamicField;
+use Packages\IctInterface\View\Components\TitleForm;
+use Packages\IctInterface\View\Components\TitlePage;
 
 class IctServiceProvider extends ServiceProvider
 {
@@ -97,6 +98,17 @@ class IctServiceProvider extends ServiceProvider
             $this->publishes([
                 $this->getPackagePath().'/resources/assets' => public_path('ict-assets'),
             ], 'assets');
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MakeModelCustom::class,
+            ]);
+
+            // Pubblica gli stub (opzionale, per personalizzazione)
+            $this->publishes([
+                __DIR__ . '/Stubs' => base_path('stubs/ict-interface'),
+            ], 'ict-stubs');
         }
 
         Paginator::useBootstrap();
