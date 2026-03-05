@@ -36,6 +36,32 @@ function _encrypt($val)
 }
 
 /**
+ * _normalize
+ * Normalizza un valore rimuovendo virgolette, apici, spazi e backtick, e converte in minuscolo.
+ * Usata per generare hash deterministici indipendenti da formattazione.
+ * @param  string $val
+ * @return string
+ */
+function _normalize($val)
+{
+    return strtolower(str_replace(['"', "'", ' ', '`'], '', $val));
+}
+
+/**
+ * _encryptHash
+ * Genera un hash deterministico (HMAC-SHA256) del valore normalizzato.
+ * Usato per la ricerca su campi crittati tramite colonna _hash.
+ * @param  string|null $val
+ * @return string|null
+ */
+function _encryptHash($val)
+{
+    if (empty($val)) return null;
+    $normalized = _normalize($val);
+    return hash_hmac('sha256', $normalized, config('app.key'));
+}
+
+/**
  * _parser
  * Parsa la stringa dei parametri scritta nel db (formato nome_chiave_1:valore_1,nome_chiave_2:valore_2) e la trasforma in un array associativo
  * @param  mixed $val

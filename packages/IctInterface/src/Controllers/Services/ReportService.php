@@ -641,6 +641,10 @@ class ReportService extends ApplicationService
                         if (request()->filled($field->name)) {
                             $whereFilters['where'][] = [$trueFieldName, '=', request()->input($field->name)];
                         }
+                    } elseif($field->type == 'crypted') {
+                        if (request()->filled($field->name)) {
+                            $whereFilters['where'][] = [$trueFieldName . '_hash', '=', _encryptHash(request()->input($field->name))];
+                        }
                     } else {
                         if (request()->filled($field->name)) {
                             $values = request()->input($field->name);  // Recupera l'array di valori dal campo di input

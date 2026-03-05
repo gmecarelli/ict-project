@@ -58,21 +58,34 @@ trait LivewireController
     }
 
     /**
-     * getIndex
+     * index
+     * Visualizza la lista dei record (report).
+     * Filtri gestiti dal componente Livewire ict-filter-form.
+     */
+    public function index(Request $request)
+    {
+        $params = $this->paramsIndex($request);
+        $params = $this->filterParamsIndex($params);
+        return $this->setViewIndex($this->reportData['blade'] == 'report' ? 'ict::'.$this->reportData['blade'] : $this->reportData['blade'], $params);
+    }
+
+    public function setViewIndex($view, $params) {
+        return view($view, $params);
+    }
+
+    /**
+     * paramsIndex
      * Restituisce i parametri per la visualizzazione del report.
      * NON richiede FormBuilder: i filtri sono gestiti dal componente Livewire.
      */
-    public function getIndex(Request $request)
+    public function paramsIndex(Request $request)
     {
         $this->_formId = $this->getFormId(request('report'));
 
         $whereFilters = $this->report->makeWhereFilter($this->_formId);
-
         $this->reportData = $this->report->loadReportProperties(request('report'));
-
         $this->model->setTable($this->reportData['table']);
 
-        $this->log->info("#INIZIO REPORT MENU#", __FILE__, __LINE__);
         $cols = $this->report->loadReportColumns(request('report'));
         $data = $this->report->loadTableData($this->model, $cols, $this->_formId, $whereFilters);
 
@@ -90,7 +103,7 @@ trait LivewireController
             'filters' => null,
             'reportId' => request('report'),
             'useNewFilters' => true,
-            'dropdown' => $this->setDropMultiSelect(),
+            'dropdown' => null,
             'pages' => $this->report->linkPages,
             'count' => $this->report->countRows,
         ];
@@ -101,23 +114,28 @@ trait LivewireController
     }
 
     /**
-     * index
-     * Visualizza la lista dei record (report).
-     * Filtri gestiti dal componente Livewire ict-filter-form.
+     * create
+     * Visualizza il form di creazione.
      */
-    public function index(Request $request)
+    public function create()
     {
-        $params = $this->getIndex($request);
-
-        return view($this->reportData['blade'] == 'report' ? 'ict::'.$this->reportData['blade'] : $this->reportData['blade'], $params);
+        $params = $this->paramsCreate();
+        $params = $this->filterParamsCreate($params);
+        $view = $this->setViewTemplate($params['form']->data);
+        return $this->setViewCreate($view, $params);
     }
 
+    public function setViewCreate($view, $params) {
+        return view($view, $params);
+    }
+    
+
     /**
-     * getCreate
+     * paramsCreate
      * Restituisce i parametri per la creazione del form.
      * Il form è gestito dal componente Livewire ict-editable-form.
      */
-    public function getCreate()
+    public function paramsCreate()
     {
         $this->_formId = $this->getFormId(request('report'));
         $this->reportData = $this->report->loadReportProperties(request('report'));
@@ -131,16 +149,6 @@ trait LivewireController
         ];
     }
 
-    /**
-     * create
-     * Visualizza il form di creazione.
-     */
-    public function create()
-    {
-        $params = $this->getCreate();
-        $view = $this->setViewTemplate($params['form']->data);
-        return view($view, $params);
-    }
 
     protected function setViewTemplate($data)
     {
@@ -148,11 +156,11 @@ trait LivewireController
     }
 
     /**
-     * getEdit
+     * paramsEdit
      * Restituisce i parametri per il form di edit.
      * Il form è gestito dal componente Livewire ict-editable-form.
      */
-    public function getEdit($id)
+    public function paramsEdit($id)
     {
         $this->_formId = $this->getFormId(request('report'));
         $this->reportData = $this->report->loadReportProperties(request('report'));
@@ -172,12 +180,84 @@ trait LivewireController
      */
     public function edit($id)
     {
-        $params = $this->getEdit($id);
+        $params = $this->paramsEdit($id);
+        $params = $this->filterParamsEdit($params);
         $view = $this->setViewTemplate($params['form']->data);
+        return $this->setViewEdit($view, $params);
+    }
+
+    public function setViewEdit($view, $params) {
         return view($view, $params);
+    }
+    
+    /**
+     * filterParamsIndex
+     * Permette di personalizzare i parametri prima di passarli alla view dell'index.
+     * @param  mixed $params
+     * @return void
+     */
+    public function filterParamsIndex($params) {
+        return $params;
+    }
+
+    
+/**
+ * Permette di personalizzare i parametri prima di passarli alla view dell'edit.
+ * @param  mixed $params
+ * @return mixed
+ */
+    public function filterParamsEdit($params) {
+        return $params;
     }
 
     /**
+     * filterParamsCreate
+     * Permette di personalizzare i parametri prima di passarli alla view del create.
+     * @param  mixed $params
+     * @return mixed
+     */
+    public function filterParamsCreate($params) {
+        return $params;
+    }
+
+/**
+ * Function catchCode
+ * Funzione per gestire le eccezioni, eseguire il rollback della transazione e loggare l'errore.
+ * @param \Exception $e - Exception to catch
+ * @param string $file - File where exception was thrown
+ * @param int $line - Line number where exception was thrown
+ * @param \Illuminate\Database\DatabaseManager|null $db - Database manager of transaction to rollback
+ */
+    public function catchCode($e, $file, $line, $db = null)
+    {
+        is_null($db) ? DB::rollBack() : $db->rollBack();
+        $this->log->rollback($file, $line);
+        if (count(DB::getQueryLog()) > 0) {
+            $this->log->sql(DB::getQueryLog(), $file, $line);
+        }
+        $this->log->error($e->getMessage() . "[" . basename($file) . ", $line]", $file, $line);
+    }
+    /**
+     * hook_FormId
+     * Funzione hook per forzare la definizione dell'id del form
+     */
+    public function hook_FormId($report = null, $type = null)
+    {
+        return is_null($report) && is_null($type) ? $this->getFormId(request('report')) : $this->getFormId($report, $type);
+    }
+
+    /**
+     * referer
+     * Redirige alla url precedente
+     */
+    public function referer()
+    {
+        return redirect(url()->previous());
+    }
+
+
+    /**
+     * @deprecated
      * destroy
      * Elimina il record.
      */
@@ -193,7 +273,14 @@ trait LivewireController
 
         return $res;
     }
-
+    
+    /**
+     * execDestroy
+     *@deprecated
+      * Esegue l'eliminazione del record. Separato da destroy() per permettere override più semplici.
+     * @param  mixed $id
+     * @return void
+     */
     public function execDestroy($id)
     {
         $this->log->info("*ELIMINO IN* " . __CLASS__, __FILE__, __LINE__);
@@ -211,6 +298,7 @@ trait LivewireController
 
     /**
      * disabled
+     * @deprecated
      * Disabilita un record (is_enabled = 0)
      */
     public function disabled($id)
@@ -232,27 +320,9 @@ trait LivewireController
         return $res;
     }
 
-    public function catchCode($e, $file, $line, $db = null)
-    {
-        is_null($db) ? DB::rollBack() : $db->rollBack();
-        $this->log->rollback($file, $line);
-        if (count(DB::getQueryLog()) > 0) {
-            $this->log->sql(DB::getQueryLog(), $file, $line);
-        }
-        $this->log->error($e->getMessage() . "[" . basename($file) . ", $line]", $file, $line);
-    }
-
-    /**
-     * referer
-     * Redirige alla url precedente
-     */
-    public function referer()
-    {
-        return redirect(url()->previous());
-    }
-
     /**
      * setDropMultiSelect
+     * @deprecated
      * Imposta il menù a tendina delle azioni del multicheck.
      * Se $reference non è passato, legge automaticamente da $this->reportData['multicheck_reference'].
      */
@@ -273,17 +343,10 @@ trait LivewireController
         return count($items) > 0 ? $multicheck->init($items) : null;
     }
 
-    /**
-     * hook_FormId
-     * Funzione hook per forzare la definizione dell'id del form
-     */
-    public function hook_FormId($report = null, $type = null)
-    {
-        return is_null($report) && is_null($type) ? $this->getFormId(request('report')) : $this->getFormId($report, $type);
-    }
 
     /**
      * removeExpiredIds
+     * @deprecated
      * Rimuove gli ID scaduti dalla lista.
      */
     public function removeExpiredIds(&$ids)

@@ -173,6 +173,7 @@ class ModalFormComponent extends Component
         foreach ($data as $key => $value) {
             if ($formService->isFieldCrypted($key, $this->formId) && !empty($value)) {
                 $data[$key] = Crypt::encryptString($value);
+                $data[$key . '_hash'] = _encryptHash($value);
             }
             if ($formService->isFieldMultiselect($key, $this->formId) && !empty($value)) {
                 $data[$key] = json_encode($value);

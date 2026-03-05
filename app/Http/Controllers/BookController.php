@@ -23,4 +23,13 @@ class BookController extends IctController
         _log()->sql($book->toSql(), __FILE__, __LINE__, $id, 'dump');
         return $this->traitEdit($id);
     }
+
+    public function test()
+    {
+        echo(response()->json([
+            'message' => 'Test endpoint is working!',
+            'timestamp' => now(),
+        ]));
+        return 1;
+    }
 }

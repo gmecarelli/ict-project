@@ -2,11 +2,12 @@
 
 namespace Packages\IctInterface\Providers;
 
-use Packages\IctInterface\Console\Commands\MakeActionHandler;
-use Packages\IctInterface\Console\Commands\MakeModelCustom;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
+use Packages\IctInterface\Console\Commands\MakeActionHandler;
+use Packages\IctInterface\Console\Commands\MakeModelCustom;
+use Packages\IctInterface\Console\Commands\RouteCall;
 use Packages\IctInterface\Livewire\AttachmentModalComponent;
 use Packages\IctInterface\Livewire\BoolSwitchComponent;
 use Packages\IctInterface\Livewire\ChildFormComponent;
@@ -105,6 +106,7 @@ class IctServiceProvider extends ServiceProvider
             $this->commands([
                 MakeActionHandler::class,
                 MakeModelCustom::class,
+                RouteCall::class,
             ]);
 
             // Pubblica gli stub (opzionale, per personalizzazione)

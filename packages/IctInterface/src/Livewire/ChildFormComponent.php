@@ -239,7 +239,9 @@ class ChildFormComponent extends Component
                 // Cifra i campi criptati
                 foreach ($this->childFields as $field) {
                     if ($field['type'] === 'crypted' && !empty($item[$field['name']])) {
-                        $item[$field['name']] = _encrypt($item[$field['name']]);
+                        $plainValue = $item[$field['name']];
+                        $item[$field['name']] = _encrypt($plainValue);
+                        $item[$field['name'] . '_hash'] = _encryptHash($plainValue);
                     }
                 }
                 // Rimuovi campi guarded
