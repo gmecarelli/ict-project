@@ -7,18 +7,12 @@
 
 namespace Packages\IctInterface\Controllers\Services;
 
-use stdClass;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Packages\IctInterface\Models\Report;
-use Packages\IctInterface\Models\ReportColumn;
-use Packages\IctInterface\Models\ReportFilter;
-use Packages\IctInterface\Controllers\IctController;
-use Packages\IctInterface\Controllers\Services\Logger;
 use Packages\IctInterface\Controllers\Services\ApplicationService;
 
 class ReportService extends ApplicationService
@@ -339,19 +333,16 @@ class ReportService extends ApplicationService
                                 continue;
                             }
 
+                            //arriva un dato separato da virgola ($arr[0][2]) quando è un filtro con operatore "in" o "not in". Es: whereIn-eq_anno[]=2024,2025
                             if ($func == 'whereIn' || $func == 'whereNotIn') {
-                                $inData = $arr[0][2];
-                                if ($inData[0] === '' || $inData[0] == '%5B%5D') {
-
+                                $inData = explode(',', $arr[0][2]);
+                                if (!isset($inData[0]) || $inData[0] === '' || $inData[0] == '%5B%5D') {
                                     continue;
                                 }
-
                                 $query->$func($arr[0][0], $inData);
-
                                 continue;
                             }
                             if ($func == 'orWhere') {
-
                                 // Raggruppa i filtri "orWhere" in una closure per evitare conflitti con altre condizioni
                                 $query->where(function ($subQuery) use ($arr) {
                                     foreach ($arr as $value) {
