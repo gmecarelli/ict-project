@@ -19,8 +19,6 @@ use Illuminate\Support\Facades\Route;
 
 require base_path('packages/IctInterface/src/routes.php');
 
-Route::get('/test', [BookController::class, 'test'])->name('test');
-
 Route::middleware(['web', 'islogged'])->group(function () {
     Route::resource('/books', BookController::class);
     Route::resource('/authors', AuthorController::class);
