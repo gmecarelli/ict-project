@@ -21,6 +21,7 @@ namespace Packages\IctInterface\Livewire;
 
 use Exception;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -249,6 +250,15 @@ class ChildFormComponent extends Component
                     if (!empty($field['is_guarded'])) {
                         unset($item[$field['name']]);
                     }
+                }
+
+                // Timestamps
+                $now = Carbon::now();
+                if (Schema::hasColumn($this->childTableName, 'created_at')) {
+                    $item['created_at'] = $now;
+                }
+                if (Schema::hasColumn($this->childTableName, 'updated_at')) {
+                    $item['updated_at'] = $now;
                 }
 
                 // Before hook

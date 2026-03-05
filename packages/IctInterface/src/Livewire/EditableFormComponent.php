@@ -17,8 +17,10 @@ namespace Packages\IctInterface\Livewire;
 use Exception;
 use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Schema;
 use Packages\IctInterface\Models\Attachment;
 use Packages\IctInterface\Services\AttachmentService;
 use Packages\IctInterface\Services\DynamicFormService;
@@ -172,6 +174,21 @@ class EditableFormComponent extends DynamicForm
                 session()->flash('message', 'Operazione annullata dal handler');
                 session()->flash('alert', 'warning');
                 return;
+            }
+        }
+
+        // Timestamps
+        $now = Carbon::now();
+        if ($this->recordId) {
+            if (Schema::hasColumn($this->tableName, 'updated_at')) {
+                $data['updated_at'] = $now;
+            }
+        } else {
+            if (Schema::hasColumn($this->tableName, 'created_at')) {
+                $data['created_at'] = $now;
+            }
+            if (Schema::hasColumn($this->tableName, 'updated_at')) {
+                $data['updated_at'] = $now;
             }
         }
 

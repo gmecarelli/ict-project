@@ -22,8 +22,10 @@ namespace Packages\IctInterface\Livewire;
 
 use Exception;
 use Livewire\Component;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Schema;
 use Packages\IctInterface\Services\DynamicFormService;
 
 class ModalFormComponent extends Component
@@ -202,6 +204,21 @@ class ModalFormComponent extends Component
             if ($data === null) {
                 session()->flash('modal_error', 'Operazione annullata dal handler');
                 return;
+            }
+        }
+
+        // Timestamps
+        $now = Carbon::now();
+        if ($this->recordId) {
+            if (Schema::hasColumn($this->tableName, 'updated_at')) {
+                $data['updated_at'] = $now;
+            }
+        } else {
+            if (Schema::hasColumn($this->tableName, 'created_at')) {
+                $data['created_at'] = $now;
+            }
+            if (Schema::hasColumn($this->tableName, 'updated_at')) {
+                $data['updated_at'] = $now;
             }
         }
 
